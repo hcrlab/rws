@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from identitytoolkit import gitkitclient
+import apps
 import argparse
 import users
 import secrets
@@ -10,6 +11,7 @@ app = Flask(__name__)
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
   'gitkit-server-config.json')
 user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
+app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -25,6 +27,9 @@ def index():
     text = 'Welcome, {}!'.format(email)
   else:
     error_msg = error_msgs[error]
+
+  app_list = app_manager.get_apps()
+  text += ' Your apps are: {}'.format([app.name() for app in app_list])
   return render_template('index.html', logged_in=(email is not None), text=text,
     error=error_msg, SERVER_ORIGIN=secrets.SERVER_ORIGIN)
 
