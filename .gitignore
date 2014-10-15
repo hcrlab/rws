@@ -54,3 +54,4 @@ docs/_build/
 target/
 
 secrets.py
+gitkit-server-config.json
