@@ -2,25 +2,10 @@
 
 {% block title %}Log in{% endblock %}
 
-{% block head %}
-  {{ super() }}
-  <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js">
-  </script>
-  <link type=text/css rel=stylesheet
-    href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-  <script type=text/javascript>
-    window.google.identitytoolkit.signInButton(
-      '#userbox', // accepts any CSS selector
-      {
-        widgetUrl: "{{ SERVER_ORIGIN }}/oauth2callback",
-        signOutUrl: "/",
-      }
-    );
-  </script>
-{% endblock %}
-
-{% block content %}
-  <h1>Robot web server</h1>
-  <p>{{ login_msg }}</p>
-  <div id="userbox"></div>
+{% block body %}
+  <div class="container">
+    <h1>Robot web server</h1>
+    <p>{{ login_msg }}</p>
+    <div id="userbox"></div>
+  </div>
 {% endblock %}
