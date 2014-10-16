@@ -16,22 +16,21 @@ app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
 @app.route('/', methods=['GET', 'POST'])
 def index():
   email, error = user_verifier.check_user(request)
-  error_msgs = {
-    users.UserVerifierError.NO_COOKIE: 'Log in',
-    users.UserVerifierError.INVALID_TOKEN: 'Invalid login',
-    users.UserVerifierError.DISALLOWED_USER: 'Only approved users may log in'
-  }
-  text = ''
-  error_msg = ''
-  if email is not None:
-    text = 'Welcome, {}!'.format(email)
-  else:
-    error_msg = error_msgs[error]
+  if email is None:
+    login_msgs = {
+      users.UserVerifierError.NO_COOKIE: 'Log in',
+      users.UserVerifierError.INVALID_TOKEN: 'Invalid login',
+      users.UserVerifierError.DISALLOWED_USER: 'Only approved users may log in'
+    }
+    text = ''
+    login_msg = login_msgs[error]
+    return render_template('login.html', 
+      login_msg=login_msg, SERVER_ORIGIN=secrets.SERVER_ORIGIN)
 
   app_list = app_manager.get_apps()
-  text += ' Your apps are: {}'.format([app.name() for app in app_list])
-  return render_template('index.html', logged_in=(email is not None), text=text,
-    error=error_msg, SERVER_ORIGIN=secrets.SERVER_ORIGIN)
+  app_list = ' Your apps are: {}'.format([app.name() for app in app_list])
+  return render_template('home.html', apps=app_list,
+    SERVER_ORIGIN=secrets.SERVER_ORIGIN)
 
 @app.route('/oauth2callback')
 def oauth2callback():
