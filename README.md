@@ -75,5 +75,5 @@ roslaunch rosbridge_server rosbridge_websocket.launch port:=9090
 
 Then run the web server:
 ```
-python main.py
+python main.py False
 ```
