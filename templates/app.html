@@ -1,0 +1,13 @@
+{% extends "chrome.html" %}
+
+{% block title %}{{ rws_app.name() }}{% endblock %}
+
+{% block head %}
+  {{ super() }}
+{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('app_close', package_name=rws_app.package_name()) }}">Close this app</a></p>
+<iframe seamless src="{{ url_for('{}.static'.format(rws_app.package_name()), filename='index.html') }}" width="100%" style="border: none">
+</iframe>
+{% endblock %}

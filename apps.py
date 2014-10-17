@@ -1,4 +1,5 @@
 import os
+import subprocess
 import xml.etree.ElementTree as ET
 
 class AppManager(object):
@@ -15,39 +16,64 @@ class AppManager(object):
       package_dir = os.path.join(self._catkin_ws, 'src')
       package_names = os.listdir(package_dir)
       full_paths = [os.path.join(package_dir, name) for name in package_names]
-      return [App(path) for path in full_paths if self.is_valid_app(path)]
+      app_list = []
+      for path in full_paths:
+        try:
+          app_list.append(App(path))
+        except ValueError:
+          continue
+      return app_list
     else:
       return []
 
-  def is_valid_app(self, path):
-    # Must have an app.launch.
-    if not os.path.exists(os.path.join(path, 'launch', 'app.launch')):
-      return False
-
-    # Must have <appname> element in package.xml exports. Catkin only.
-    app_name = App.read_name(path)
-    if app_name is None:
-      return False
-
-    return True
-
 class App(object):
   def __init__(self, path):
-    self._name = self.read_name(path)
+    self._package_path = path
 
-  @staticmethod
-  def read_name(path):
+    if not os.path.exists(os.path.join(path, 'launch', 'app.launch')):
+      raise ValueError('Package {} has no app.launch'.format(path))
+
     package_xml_path = os.path.join(path, 'package.xml')
     if not os.path.exists(package_xml_path):
-      return None
+      raise ValueError('Package {} has no package.xml'.format(path))
+
     package_xml = ET.parse(package_xml_path)
     appname_elems = [x for x in package_xml.iter('appname')]
-    if len(appname_elems) != 1:
-      return None
-    return appname_elems[0].text
+    if len(appname_elems) == 0:
+      raise ValueError(
+        'Package {} has no <appname> in package.xml'.format(path))
+    self._name = appname_elems[0].text
+
+    package_name_elems = [x for x in package_xml.iter('name')]
+    if len(package_name_elems) == 0:
+      raise ValueError(
+        'Package {} has no <name> in package.xml'.format(path))
+    self._package_name = package_name_elems[0].text
+
+    self._subprocess = None
 
   def name(self):
     return self._name
 
+  def package_name(self):
+    return self._package_name
+
+  def package_path(self):
+    return self._package_path
+
+  def is_running(self):
+    return self._subprocess is not None
+
   def launch(self):
-    pass
+    # TODO(jstn): more thread safety stuff.
+    if self._subprocess is None:
+      launch_file = os.path.join(self._package_path, 'launch', 'app.launch')
+      if not os.path.exists(launch_file):
+        return
+      self._subprocess = subprocess.Popen(['roslaunch', launch_file], env=os.environ)
+
+  def terminate(self):
+    self._subprocess.terminate()
+    self._subprocess.wait()
+    self._subprocess = None
+
