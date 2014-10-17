@@ -12,20 +12,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-
-    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js">
-    </script>
-    <link type=text/css rel=stylesheet
-      href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-    <script type=text/javascript>
-      window.google.identitytoolkit.signInButton(
-        '#userbox', // accepts any CSS selector
-        {
-          widgetUrl: "{{ SERVER_ORIGIN }}/oauth2callback",
-          signOutUrl: "/",
-        }
-      );
-    </script>
     {% endblock %}
   </head>
   <body>
