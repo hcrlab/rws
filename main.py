@@ -15,7 +15,7 @@ import threading
 app = Flask(__name__)
 
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
-  'gitkit-server-config.json')
+  secrets.GITKIT_SERVER_CONFIG_PATH)
 user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
 
 app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)

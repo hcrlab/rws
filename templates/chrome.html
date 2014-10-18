@@ -5,8 +5,14 @@
   <link href="{{ url_for('static', filename='css/chrome.css') }}"  rel="stylesheet" />
   <script>
     $(document).ready(function() {
-      $('[data-toggle=offcanvas]').click(function() {
-        $('.row-offcanvas').toggleClass('active');
+      $("#menu-toggle").click(function(e) {
+          e.preventDefault();
+          $("#wrapper").toggleClass("toggled");
+          if ($(this).text() == 'Open app menu') {
+            $(this).text('Close app menu');
+          } else {
+            $(this).text('Open app menu');
+          }
       });
     });
   </script>
@@ -17,32 +23,33 @@
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".nav-sidebar" style="float: left; margin-left: 10px;">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
+        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Open app menu</a>
         <a class="navbar-brand" href="#">Robot web server</a>
       </div>
     </div>
   </div>
-  <div class="container-fluid">
-    <div class="row row-offcanvas row-offcanvas-left">
-      <div class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas" id="sidebar" role="navigation">
-        <ul class="nav nav-sidebar">
-          <li class="{{'active' if current_tab == 'rws_welcome' else ''}}"><a href="/">Home</a></li>
-          {% for rapp in app_list %}
-            <li class="{{'active' if current_tab == rapp.package_name() else ''}}">
-              <a href="{{ url_for('app_controller', package_name=rapp.package_name()) }}">
-                {{ rapp.name() }}
-              </a>
-            </li>
-          {% endfor %} 
-        </ul>
-      </div>
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        {% block content %}
-        {% endblock %}
+
+  <div id="wrapper">
+    <div id="sidebar-wrapper" role="navigation">
+      <ul class="sidebar-nav">
+        <li class="{{'active' if current_tab == 'rws_welcome' else ''}}"><a href="/">Home</a></li>
+        {% for rapp in app_list %}
+          <li class="{{'active' if current_tab == rapp.package_name() else ''}}">
+            <a href="{{ url_for('app_controller', package_name=rapp.package_name()) }}">
+              {{ rapp.name() }}
+            </a>
+          </li>
+        {% endfor %} 
+      </ul>
+    </div>
+
+    <div id="page-content-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            {% block content %}
+            {% endblock %}
+          </div>
         </div>
       </div>
     </div>
