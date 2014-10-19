@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Blueprint
 from flask import Flask
 from flask import redirect
@@ -9,7 +11,9 @@ import apps
 import argparse
 import os
 import users
+import rospy
 import secrets
+import sys
 import threading
 
 app = Flask(__name__)
@@ -78,6 +82,8 @@ def app_close(package_name):
     return 'Error: no app named {}'.format(package_name)
 
 if __name__ == '__main__':
+  rospy.init_node('robot_web_server')
+  sys.argv = rospy.myargv(argv=sys.argv)
   parser = argparse.ArgumentParser(description='Robot web server.')
   parser.add_argument('debug', type=bool, default=False,
       help='Whether to start the server in debug mode.')
