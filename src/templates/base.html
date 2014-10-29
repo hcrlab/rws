@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
     <link rel="import" href="{{ url_for('static', filename='bower_components/polymer/layout.html') }}" />
+    <link rel="import" href="{{ url_for('static', filename='bower_components/polymer/layout.html') }}" />
+    <link rel="import" href="{{ url_for('static', filename='bower_components/font-roboto/roboto.html') }}" />
     <script src="{{ url_for('static', filename='bower_components/platform/platform.js') }}"></script>
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+    </style>
     {% endblock %}
   </head>
   {% block body %}{% endblock %}

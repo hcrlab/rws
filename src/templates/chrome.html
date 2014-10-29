@@ -9,6 +9,18 @@
   <link rel="import" href="{{ url_for('static', filename='bower_components/core-menu/core-menu.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/core-scaffold/core-scaffold.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/core-toolbar/core-toolbar.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <style>
+    core-header-panel {
+      background-color: #eee;
+    }
+    .content {
+      background-color: #fff;
+    }
+    core-toolbar {
+      background-color: #673ab7;
+    }
+  </style>
 {% endblock %}
 
 {% block body %}
@@ -20,21 +32,18 @@
           <span>Apps</span>
         </core-toolbar>
         <core-menu>
-          <!--li class="{{'active' if current_tab == 'rws_welcome' else ''}}"><a href="/">Home</a></li-->
-          <a href="/">
-            <core-item label="Home"></core-item>
-          </a>
+          <core-item class="nav-appname {{'core-selected' if current_tab == 'rws_welcome' else ''}}" label="Home">
+            <a href="/"></a>
+          </core-item>
           {% for rapp in app_list %}
-            <a href="{{ url_for('app_controller', package_name=rapp.package_name()) }}">
-              <core-item label="{{ rapp.name() }}"></core-item>
-            </a>
-            <!--li class="{{'active' if current_tab == rapp.package_name() else ''}}">
-            </li-->
+            <core-item class="nav-appname {{'core-selected' if current_tab == rapp.package_name() else ''}}" label="{{ rapp.name() }}">
+              <a href="{{ url_for('app_controller', package_name=rapp.package_name()) }}"></a>
+            </core-item>
           {% endfor %} 
         </core-menu>
       </core-header-panel>
       <span tool>Robot web server</span>
-      <div class="content">
+      <div fit class="content">
         {% block content %}
         {% endblock %}
       </div>
