@@ -69,6 +69,4 @@ You will need to create a secrets.py file in the same folder as main.py. secrets
 Update the CMAKE_PREFIX_PATH in launch/rws_launch.sh to your version of ROS.
 
 ## Running
-Ideally, we can just run `roslaunch rws rws.launch`. But, for some reason, rosbridge_server fails to find certain nodes when CMAKE_PREFIX_PATH is set to something other than /opt/ros/<distro>. So, we wrap the roslaunch call in a script that sets CMAKE_PREFIX_PATH appropriately first.
-
-`rosrun rws rws_launch.sh`
+Run `roslaunch rws rws.launch`.
