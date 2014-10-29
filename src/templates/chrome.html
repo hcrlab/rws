@@ -11,22 +11,13 @@
   <link rel="import" href="{{ url_for('static', filename='bower_components/core-toolbar/core-toolbar.html') }}" />
   <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
   <style>
-    core-header-panel {
-      background-color: #eee;
-    }
-    .content {
-      background-color: #fff;
-    }
-    core-toolbar {
-      background-color: #673ab7;
-    }
   </style>
 {% endblock %}
 
 {% block body %}
   {{ super() }}
   <body fullbleed vertical layout unresolved>
-    <core-scaffold responsiveWidth="600px">
+    <core-scaffold responsiveWidth="700px">
       <core-header-panel navigation flex mode="seamed">
         <core-toolbar id="navheader">
           <span>Apps</span>
