@@ -3,55 +3,50 @@
 {% block head %}
   {{ super() }}
   <link href="{{ url_for('static', filename='css/chrome.css') }}"  rel="stylesheet" />
-  <script>
-    $(document).ready(function() {
-      $("#menu-toggle").click(function(e) {
-          e.preventDefault();
-          $("#wrapper").toggleClass("toggled");
-          if ($(this).text() == 'Open app menu') {
-            $(this).text('Close app menu');
-          } else {
-            $(this).text('Open app menu');
-          }
-      });
-    });
-  </script>
+  <link rel="import" href="{{ url_for('static', filename='bower_components/core-drawer-panel/core-drawer-panel.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/core-header-panel/core-header-panel.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/core-item/core-item.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/core-menu/core-menu.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/core-scaffold/core-scaffold.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/core-toolbar/core-toolbar.html') }}" />
+  <link rel="import" href="{{ url_for('static', filename='bower_components/paper-button/paper-button.html') }}" />
+  <style>
+    core-header-panel {
+      background-color: #eee;
+    }
+    .content {
+      background-color: #fff;
+    }
+    core-toolbar {
+      background-color: #673ab7;
+    }
+  </style>
 {% endblock %}
 
 {% block body %}
   {{ super() }}
-  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Open app menu</a>
-        <a class="navbar-brand" href="#">Robot web server</a>
+  <body fullbleed vertical layout unresolved>
+    <core-scaffold responsiveWidth="600px">
+      <core-header-panel navigation flex mode="seamed">
+        <core-toolbar id="navheader">
+          <span>Apps</span>
+        </core-toolbar>
+        <core-menu>
+          <core-item class="nav-appname {{'core-selected' if current_tab == 'rws_welcome' else ''}}" label="Home">
+            <a href="/"></a>
+          </core-item>
+          {% for rapp in app_list %}
+            <core-item class="nav-appname {{'core-selected' if current_tab == rapp.package_name() else ''}}" label="{{ rapp.name() }}">
+              <a href="{{ url_for('app_controller', package_name=rapp.package_name()) }}"></a>
+            </core-item>
+          {% endfor %} 
+        </core-menu>
+      </core-header-panel>
+      <span tool>Robot web server</span>
+      <div fit class="content">
+        {% block content %}
+        {% endblock %}
       </div>
-    </div>
-  </div>
-
-  <div id="wrapper">
-    <div id="sidebar-wrapper" role="navigation">
-      <ul class="sidebar-nav">
-        <li class="{{'active' if current_tab == 'rws_welcome' else ''}}"><a href="/">Home</a></li>
-        {% for rapp in app_list %}
-          <li class="{{'active' if current_tab == rapp.package_name() else ''}}">
-            <a href="{{ url_for('app_controller', package_name=rapp.package_name()) }}">
-              {{ rapp.name() }}
-            </a>
-          </li>
-        {% endfor %} 
-      </ul>
-    </div>
-
-    <div id="page-content-wrapper">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-12">
-            {% block content %}
-            {% endblock %}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    </core-scaffold>
+  </body>
 {% endblock %}
