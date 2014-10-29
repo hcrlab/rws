@@ -4,15 +4,6 @@
 
 {% block head %}
   {{ super() }}
-  <script>
-    function setIframeHeight() {
-      $("#appframe").height($(window).height());
-    }
-    $(window).resize(setIframeHeight);
-    $(document).ready(function() {
-      setIframeHeight();
-    });
-  </script>
 {% endblock %}
 
 {% block content %}
