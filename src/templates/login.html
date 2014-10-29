@@ -17,15 +17,35 @@
       }
     );
   </script>
+  <style>
+    .gitkit-id-submit {
+      background-color: #efefef;
+      padding: 10px;
+      font-size: 1.5em;
+      height: auto;
+      line-height: auto;
+    }
+    .login-box {
+      padding: 10px;
+      font-family: sans-serif;
+      width: 300px;
+      border-radius: 5px;
+      background-color: rgb(238, 238, 238);
+    }
+    .login-box h1 {
+      margin: 0px;
+      margin-bottom: 10px;
+    }
+  </style>
 {% endblock %}
 
-
 {% block body %}
-    <div class="jumbotron">
-  <div class="container">
+<body fullbleed vertical layout>
+  <div flex horizontal layout center center-justified>
+    <div class="login-box" vertical layout center-justified>
       <h1>Robot web server</h1>
-      <p>{{ login_msg }}</p>
       <div id="userbox"></div>
     </div>
   </div>
+</body>
 {% endblock %}

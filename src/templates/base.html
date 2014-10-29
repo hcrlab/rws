@@ -2,21 +2,12 @@
 <html>
   <head>
     {% block head %}
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>{% block title %}{% endblock %} - Robot web server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="import" href="{{ url_for('static', filename='bower_components/polymer/layout.html') }}" />
+    <script src="{{ url_for('static', filename='bower_components/platform/platform.js') }}"></script>
     {% endblock %}
   </head>
-  <body>
-    {% block body %}{% endblock %}
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-  </body>
+  {% block body %}{% endblock %}
 </html>
