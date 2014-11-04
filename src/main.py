@@ -11,7 +11,6 @@ import apps
 import argparse
 import os
 import users
-import rospy
 import secrets
 import sys
 import threading
@@ -82,8 +81,6 @@ def app_close(package_name):
     return 'Error: no app named {}'.format(package_name)
 
 if __name__ == '__main__':
-  rospy.init_node('robot_web_server')
-  sys.argv = rospy.myargv(argv=sys.argv)
   parser = argparse.ArgumentParser(description='Robot web server.')
   parser.add_argument('debug', type=bool, default=False,
       help='Whether to start the server in debug mode.')
