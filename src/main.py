@@ -6,6 +6,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+from functools import wraps
 from identitytoolkit import gitkitclient
 import apps
 import argparse
@@ -34,20 +35,30 @@ for rws_app in app_list:
       static_folder=os.path.join(rws_app.package_path(), 'www'))
   app.register_blueprint(blueprint)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-  email, error = user_verifier.check_user(request)
-  if email is None:
-    login_msgs = {
-      users.UserVerifierError.NO_COOKIE: 'Log in',
-      users.UserVerifierError.INVALID_TOKEN: 'Invalid login',
-      users.UserVerifierError.DISALLOWED_USER: 'Only approved users may log in'
-    }
-    text = ''
-    login_msg = login_msgs[error]
-    return render_template('login.html', 
-      login_msg=login_msg, SERVER_ORIGIN=secrets.SERVER_ORIGIN)
+def login_required(f):
+  @wraps(f)
+  def decorated_function(*args, **kwargs):
+    email, error = user_verifier.check_user(request)
+    if email is None:
+      login_msgs = {
+        users.UserVerifierError.NO_COOKIE: 'Log in',
+        users.UserVerifierError.INVALID_TOKEN: 'Invalid login',
+        users.UserVerifierError.DISALLOWED_USER: 'Only approved users may log in'
+      }
+      text = ''
+      login_msg = login_msgs[error]
 
+      return render_template(
+        'login.html',
+        login_msg=login_msg,
+        SERVER_ORIGIN=secrets.SERVER_ORIGIN,
+      )
+    return f(*args, **kwargs)
+  return decorated_function
+
+@app.route('/', methods=['GET', 'POST'])
+@login_required
+def index():
   return render_template('home.html', app_list=app_list,
     current_tab='rws_welcome', SERVER_ORIGIN=secrets.SERVER_ORIGIN)
 
@@ -57,6 +68,7 @@ def oauth2callback():
     BROWSER_API_KEY=secrets.BROWSER_API_KEY)
 
 @app.route('/app/<package_name>')
+@login_required
 def app_controller(package_name):
   if package_name in rws_apps:
     rws_apps_lock.acquire()
@@ -69,6 +81,7 @@ def app_controller(package_name):
     return 'Error: no app named {}'.format(package_name)
 
 @app.route('/app/close/<package_name>')
+@login_required
 def app_close(package_name):
   if package_name in rws_apps:
     rws_apps_lock.acquire()
