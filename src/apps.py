@@ -2,6 +2,13 @@ import os
 import subprocess
 import xml.etree.ElementTree as ET
 
+# TODO(jstn): There is a code API for roslaunch:
+# http://docs.ros.org/hydro/api/roslaunch/html/
+# If we used it we could possibly use the process monitor to know when apps have
+# failed. We could also possibly take advantage of their implementation of XML
+# parsing. However, I think these aren't big enough advantages to justify
+# rewriting this yet.
+
 class AppManager(object):
   def __init__(self, catkin_ws=None, rosbuild_ws=None):
     self._catkin_ws = catkin_ws
