@@ -11,10 +11,10 @@ from identitytoolkit import gitkitclient
 import apps
 import argparse
 import os
-import users
 import secrets
 import sys
 import threading
+import users
 
 app = Flask(__name__)
 
