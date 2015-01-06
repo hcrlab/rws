@@ -93,6 +93,11 @@ def app_close(package_name):
   else:
     return 'Error: no app named {}'.format(package_name)
 
+@app.route('/get_websocket_url')
+@login_required
+def websocket_url():
+  return secrets.WEBSOCKET_URL
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Robot web server.')
   parser.add_argument('debug', type=bool, default=False,
