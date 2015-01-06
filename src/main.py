@@ -11,6 +11,7 @@ from identitytoolkit import gitkitclient
 import apps
 import argparse
 import os
+import rospy
 import secrets
 import sys
 import threading
@@ -102,6 +103,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Robot web server.')
   parser.add_argument('debug', type=bool, default=False,
       help='Whether to start the server in debug mode.')
+  sys.argv = rospy.myargv()
   args = parser.parse_args()
 
   app.run(host='0.0.0.0', debug=args.debug)
