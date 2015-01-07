@@ -81,7 +81,7 @@ Finally, install [rosbridge_server](http://wiki.ros.org/rosbridge_server) if you
 ## Configuration
 You will need to create a secrets.py file in the same folder as main.py. secrets.py is kept out of this repository, and it may change. However, currently, it needs to contain:
 * SERVER_ORIGIN: The protocol, server, and port of the server. For example, `'http://pr2.university.edu:5000'`
-* GITKIT_SERVER_CONFIG_PATH: Location on the file system where your gitkit-server-config.json is. For example, '/
+* GITKIT_SERVER_CONFIG_PATH: Location on the file system where your gitkit-server-config.json is. For example, `/home/rosie/gitkit/gitkit-server-config.json`
 * BROWSER_API_KEY: The browser API key from the Google Identity Toolkit instructions (`'AIza...'`)
 * ALLOWED_USERS: A list of email addresses of allowed users. As part of the Google Identity Toolkit, you can set up GMail, Yahoo, Facebook, etc. For example, `['user1@gmail.com', 'user2@university.edu']`
 * CATKIN_WS: The path to a catkin workspace you'd like to search for apps. For example, `'home/rws/catkin_ws'`
