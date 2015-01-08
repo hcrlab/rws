@@ -72,8 +72,9 @@ For user authentication, you will need a private key and config file that works 
 
 You also need to install a few other things.
 ```
-pip install flask
-pip install enum34
+sudo pip install flask
+sudo pip install enum34
+sudo pip install -r requirements.txt
 ```
 
 Finally, install [rosbridge_server](http://wiki.ros.org/rosbridge_server) if you don't already have it.
