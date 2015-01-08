@@ -89,4 +89,10 @@ You will need to create a secrets.py file in the same folder as main.py. secrets
 You can obtain a copy of secrets.py from Justin.
 
 ## Running
+First, add the catkin workspace that contains all your apps to your ROS package path, if it isn't there already:
+```
+export ROS_PACKAGE_PATH=/dir/to/rws/catkin_ws:$ROS_PACKAGE_PATH
+```
+Do this before you running RWS, or just add it to your .bashrc for convenience.
+
 Run `roslaunch rws rws.launch`.
