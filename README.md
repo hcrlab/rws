@@ -61,7 +61,7 @@ $.get('/get_websocket_url', function(data, status) {
 You can develop your app locally by running your app.launch, launching rosbridge_webserver, and visiting your index.html. When you want to install it on the robot, just copy it to the catkin_ws on the robot that RWS is monitoring and build your package.
 
 ## Installing RWS on a robot
-RWS runs on Python 2.7
+RWS runs on Python 2.7. It's recommended that you use ROS Hydro.
 
 ```
 cd ~/catkin_ws/src
@@ -76,14 +76,22 @@ sudo pip install -r requirements.txt
 ```
 
 Finally, install [rosbridge_server](http://wiki.ros.org/rosbridge_server) if you don't already have it.
+```
+sudo apt-get install ros-hydro-rosbridge-suite
+```
+
+RWS looks in a particular catkin_ws folder for apps. The location of this folder can be specified in secrets.py (described below), but you will need to create it first. For example:
+```
+mkdir -p ~/rws/catkin_ws/src
+```
 
 ## Configuration
-You will need to create a secrets.py file in the same folder as main.py. secrets.py is kept out of this repository, and it may change. However, currently, it needs to contain:
+You will need to create a secrets.py file in the same folder as main.py. secrets.py is kept out of this repository, and it may change. Currently, it must be a file that defines the following constants:
 * SERVER_ORIGIN: The protocol, server, and port of the server. For example, `'http://pr2.university.edu:5000'`
 * GITKIT_SERVER_CONFIG_PATH: Location on the file system where your gitkit-server-config.json is. For example, `/home/rosie/gitkit/gitkit-server-config.json`
 * BROWSER_API_KEY: The browser API key from the Google Identity Toolkit instructions (`'AIza...'`)
 * ALLOWED_USERS: A list of email addresses of allowed users. As part of the Google Identity Toolkit, you can set up GMail, Yahoo, Facebook, etc. For example, `['user1@gmail.com', 'user2@university.edu']`
-* CATKIN_WS: The path to a catkin workspace you'd like to search for apps. For example, `'home/rws/catkin_ws'`
+* CATKIN_WS: The path to a catkin workspace you'd like to search for apps. For example, `/home/rosie/rws/catkin_ws`
 * WEBSOCKET_URL: The websocket URL for rosbridge (`ws://localhost:9090`)
 
 You can obtain a copy of secrets.py from Justin.
