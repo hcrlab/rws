@@ -61,6 +61,8 @@ $.get('/get_websocket_url', function(data, status) {
 You can develop your app locally by running your app.launch, launching rosbridge_webserver, and visiting your index.html. When you want to install it on the robot, just copy it to the catkin_ws on the robot that RWS is monitoring and build your package.
 
 ## Installing RWS on a robot
+
+### Get the code
 RWS runs on Python 2.7. It's recommended that you use ROS Hydro.
 
 ```
@@ -68,9 +70,10 @@ cd ~/catkin_ws/src
 git clone git@github.com:hcrlab/rws.git
 ```
 
-For user authentication, you will need a private key and config file that works with the [Google Identity Toolkit](https://developers.google.com/identity-toolkit/quickstart/python). You can obtain a copy of one by asking Justin. Or, you can follow their [quickstart guide](https://developers.google.com/identity-toolkit/quickstart/python) and generate your own. Put these files in a location readable by Flask, which you will specify in a secrets.py file. You will also generate a P12 file, which can also be saved anywhere. You will reference the location of the P12 file in your gitkit-server-config.json.
+Ask Justin for a copy of secrets.py, or make your own secrets.py (described below).
 
-You also need to install a few other things.
+### Install requirements
+You need to install some Python packages.
 ```
 sudo pip install -r requirements.txt
 ```
@@ -80,10 +83,30 @@ Finally, install [rosbridge_server](http://wiki.ros.org/rosbridge_server) if you
 sudo apt-get install ros-hydro-rosbridge-suite
 ```
 
+### Set up user authentication
+For user authentication, you will need a private key and config file that works with the [Google Identity Toolkit](https://developers.google.com/identity-toolkit/quickstart/python). You can obtain a copy of one by asking Justin. Or, you can follow their [quickstart guide](https://developers.google.com/identity-toolkit/quickstart/python) and generate your own. Put these files in a location readable by Flask, which you will specify in a secrets.py file. You will also generate a P12 file, which can also be saved anywhere.
+
+Modify gitkit-server-config.json to specify the location of the P12 file. Then, modify secrets.py to specify the location of gitkit-server-config.json. 
+
+### Set up an app.
 RWS looks in a particular catkin_ws folder for apps. The location of this folder can be specified in secrets.py (described below), but you will need to create it first. For example:
 ```
 mkdir -p ~/rws/catkin_ws/src
+cd ~/rws/catkin_ws/src
+catkin_init_workspace
+cd ..
+catkin_make
 ```
+
+A sample app you can put in the catkin workspace is [Say something](https://github.com/hcrlab/say_something).
+```
+cd ~/rws/catkin_ws/src
+git clone git@github.com:hcrlab/say_something.git
+cd ..
+catkin_make
+```
+
+Refer to the repo for the app you're installing for further installation instructions.
 
 ## Configuration
 You will need to create a secrets.py file in the same folder as main.py. secrets.py is kept out of this repository, and it may change. Currently, it must be a file that defines the following constants:
