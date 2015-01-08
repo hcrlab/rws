@@ -72,8 +72,6 @@ For user authentication, you will need a private key and config file that works 
 
 You also need to install a few other things.
 ```
-sudo pip install flask
-sudo pip install enum34
 sudo pip install -r requirements.txt
 ```
 
