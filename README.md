@@ -77,6 +77,11 @@ You need to install some Python packages.
 ```
 sudo pip install -r requirements.txt
 ```
+If this fails because it can't find libffi, then install libffi:
+
+```
+sudo apt-get install libffi-dev
+```
 
 Finally, install [rosbridge_server](http://wiki.ros.org/rosbridge_server) if you don't already have it.
 ```
