@@ -101,7 +101,7 @@ def websocket_url():
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Robot web server.')
-  parser.add_argument('debug', type=bool, default=False,
+  parser.add_argument('--debug', type=bool, default=False,
       help='Whether to start the server in debug mode.')
   sys.argv = rospy.myargv()
   args = parser.parse_args()
