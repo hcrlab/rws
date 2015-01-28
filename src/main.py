@@ -36,6 +36,9 @@ rws_apps_lock.release()
 from robot_start_stop import blueprint as robot_start_stop_blueprint
 app.register_blueprint(robot_start_stop_blueprint, url_prefix='/api/robot')
 
+from user_presence import blueprint as user_presence_blueprint
+app.register_blueprint(user_presence_blueprint)
+
 for rws_app in app_list:
   blueprint = Blueprint(rws_app.package_name(), __name__,
       static_url_path='/app/{}'.format(rws_app.package_name()),
