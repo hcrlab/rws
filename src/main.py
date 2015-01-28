@@ -31,6 +31,10 @@ rws_apps_lock.acquire()
 rws_apps = {x.package_name(): x for x in app_list}
 rws_apps_lock.release()
 
+# Include routes from blueprints
+from user_presence import blueprint as user_presence_blueprint
+app.register_blueprint(user_presence_blueprint)
+
 for rws_app in app_list:
   blueprint = Blueprint(rws_app.package_name(), __name__,
       static_url_path='/app/{}'.format(rws_app.package_name()),
