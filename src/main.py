@@ -8,6 +8,7 @@ from flask import request
 from flask import url_for
 from functools import wraps
 from identitytoolkit import gitkitclient
+from websocket import WebsocketServer
 import apps
 import argparse
 import os
@@ -35,6 +36,11 @@ for rws_app in app_list:
       static_url_path='/app/{}'.format(rws_app.package_name()),
       static_folder=os.path.join(rws_app.package_path(), 'www'))
   app.register_blueprint(blueprint)
+
+# TODO(jstn): make websocket server url programmatic based on the port number.
+# TODO(jstn): randomize port number?
+websocket_server = WebsocketServer(9999)
+websocket_server.launch()
 
 def login_required(f):
   @wraps(f)
