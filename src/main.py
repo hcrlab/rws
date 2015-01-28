@@ -85,7 +85,8 @@ def app_controller(package_name):
     rws_app.launch()
     rws_apps_lock.release()
 
-    return render_template('app.html', current_tab=package_name, app_list=app_list, rws_app=rws_app)
+    return render_template('app.html', current_tab=package_name,
+        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME)
   else:
     return 'Error: no app named {}'.format(package_name)
 
