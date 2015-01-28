@@ -5,6 +5,8 @@
     <title>{% block title %}{% endblock %} - Robot web server</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#3F51B5" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/icon.png') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
     <link rel="import" href="{{ url_for('static', filename='bower_components/polymer/layout.html') }}" />
     <link rel="import" href="{{ url_for('static', filename='bower_components/polymer/layout.html') }}" />
