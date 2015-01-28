@@ -11,6 +11,7 @@ from identitytoolkit import gitkitclient
 from websocket import WebsocketServer
 import apps
 import argparse
+import config
 import os
 import rospy
 import secrets
@@ -67,7 +68,8 @@ def login_required(f):
 @login_required
 def index():
   return render_template('home.html', app_list=app_list,
-    current_tab='rws_welcome', SERVER_ORIGIN=secrets.SERVER_ORIGIN)
+    current_tab='rws_welcome', SERVER_ORIGIN=secrets.SERVER_ORIGIN,
+    ROBOT_NAME=config.ROBOT_NAME)
 
 @app.route('/oauth2callback')
 def oauth2callback():
