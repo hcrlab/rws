@@ -1,0 +1,1 @@
+ROBOT_NAME = 'Rosie'
