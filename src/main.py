@@ -83,6 +83,7 @@ def oauth2callback():
 @app.route('/app/<package_name>')
 @login_required
 def app_controller(package_name):
+  # TODO(csu): also add users to user presence set here
   if package_name in rws_apps:
     rws_apps_lock.acquire()
     rws_app = rws_apps[package_name]
@@ -97,6 +98,7 @@ def app_controller(package_name):
 @app.route('/app/close/<package_name>')
 @login_required
 def app_close(package_name):
+  # TODO(csu): also remove users from user presence set here
   if package_name in rws_apps:
     rws_apps_lock.acquire()
     rws_app = rws_apps[package_name]
