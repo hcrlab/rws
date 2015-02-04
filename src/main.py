@@ -83,28 +83,35 @@ def oauth2callback():
 @app.route('/app/<package_name>')
 @login_required
 def app_controller(package_name):
-  # TODO(csu): also add users to user presence set here
   if package_name in rws_apps:
     rws_apps_lock.acquire()
     rws_app = rws_apps[package_name]
     rws_app.launch()
     rws_apps_lock.release()
 
+    # For user presence
+    # TODO(csu): fix this. appears to cause a redirect loop.
+    email, error = user_verifier.check_user(request)
+    # TODO(csu): also add users to user presence set here
+
     return render_template('app.html', current_tab=package_name,
-        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME)
+        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME),
+        user_identifier=email)
   else:
     return 'Error: no app named {}'.format(package_name)
 
 @app.route('/app/close/<package_name>')
 @login_required
 def app_close(package_name):
-  # TODO(csu): also remove users from user presence set here
   if package_name in rws_apps:
     rws_apps_lock.acquire()
     rws_app = rws_apps[package_name]
     if rws_app.is_running():
       rws_app.terminate()
     rws_apps_lock.release()
+
+    # TODO(csu): also remove users from user presence set here
+
     return redirect(url_for('index'))
   else:
     return 'Error: no app named {}'.format(package_name)
@@ -121,4 +128,4 @@ if __name__ == '__main__':
   sys.argv = rospy.myargv()
   args = parser.parse_args()
 
-  app.run(host='0.0.0.0', debug=args.debug)
+  app.run(host='0.0.0.0', debug=True)
