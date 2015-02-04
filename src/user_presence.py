@@ -13,8 +13,10 @@ def get_current_users:
 def add_user():
     user = request.form['user']
     current_users.add(user)
+    return jsonify(current_users)
 
 @blueprint.route('/remove', methods=['POST'])
 def remove_user():
     user = request.form['user']
     current_users.pop(user)
+    return jsonify(current_users)
