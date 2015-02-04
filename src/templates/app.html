@@ -4,6 +4,10 @@
 
 {% block head %}
   {{ super() }}
+  <script type="text/javascript">
+    var location = window.location.pathname;
+  </script>
+  <script src="{{ url_for('static', filename='js/user_presence.js') }}"></script>
 {% endblock %}
 
 {% block content %}
