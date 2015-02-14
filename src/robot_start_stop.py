@@ -7,9 +7,15 @@ blueprint = Blueprint('robot_start_stop', __name__)
 def claim_and_start_robot():
     user = request.form['user']
 
-    subprocess.check_call('`robot claim -f --username ' + user + ' --email ' + user + ' -m "teleoperating the robot (claimed via Robot Web Server)"', shell=True)
+    subprocess.check_call('robot claim -f --username ' + user + ' --email ' + user + ' -m "teleoperating the robot (claimed via Robot Web Server)"', shell=True)
     subprocess.check_call('robot start -f', shell=True)
 
+    return jsonify({'status': 'success'})
+
+@blueprint.route('/start', methods=['POST'])
+def stop_robot():
+    subprocess.check_call('robot stop -f', shell=True)
+    
     return jsonify({'status': 'success'})
 
 @blueprint.route('/check', methods=['GET'])
