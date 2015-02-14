@@ -12,10 +12,10 @@ def claim_and_start_robot():
 
     return jsonify({'status': 'success'})
 
-@blueprint.route('/start', methods=['POST'])
+@blueprint.route('/stop', methods=['POST'])
 def stop_robot():
     subprocess.check_call('robot stop -f', shell=True)
-    
+
     return jsonify({'status': 'success'})
 
 @blueprint.route('/check', methods=['GET'])
