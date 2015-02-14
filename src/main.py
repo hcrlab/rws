@@ -98,7 +98,7 @@ def app_controller(package_name):
     # TODO(csu): also add users to user presence set here
 
     return render_template('app.html', current_tab=package_name,
-        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME),
+        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME,
         user_identifier=email)
   else:
     return 'Error: no app named {}'.format(package_name)
@@ -131,4 +131,4 @@ if __name__ == '__main__':
   sys.argv = rospy.myargv()
   args = parser.parse_args()
 
-  app.run(host='0.0.0.0', debug=True)
+  app.run(host='0.0.0.0', debug=args.debug)
