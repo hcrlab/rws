@@ -47,8 +47,8 @@ for rws_app in app_list:
 
 # TODO(jstn): make websocket server url programmatic based on the port number.
 # TODO(jstn): randomize port number?
-websocket_server = WebsocketServer(9999)
-websocket_server.launch()
+# websocket_server = WebsocketServer(9999)
+# websocket_server.launch()
 
 def login_required(f):
   @wraps(f)
@@ -93,13 +93,12 @@ def app_controller(package_name):
     rws_apps_lock.release()
 
     # For user presence
-    # TODO(csu): fix this. appears to cause a redirect loop.
-    #email, error = user_verifier.check_user(request)
+    email, error = user_verifier.check_user(request)
     # TODO(csu): also add users to user presence set here
 
     return render_template('app.html', current_tab=package_name,
-        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME)#,
-        #user_identifier=email)
+        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME,
+        user_identifier=email)
   else:
     return 'Error: no app named {}'.format(package_name)
 
