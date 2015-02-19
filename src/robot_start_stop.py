@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 import subprocess
+from subprocess import CalledProcessError
 
 blueprint = Blueprint('robot_start_stop', __name__)
 
@@ -7,20 +8,23 @@ blueprint = Blueprint('robot_start_stop', __name__)
 def claim_and_start_robot():
     user = request.form['user']
 
-    result = subprocess.check_call('robot claim -f --username ' + user + ' --email ' + user + ' -m "teleoperating the robot (claimed via Robot Web Server)"', shell=True)
-    if (result != 0):
+    try:
+        subprocess.check_call('robot claim -f --username ' + user + ' --email ' + user + ' -m "teleoperating the robot (claimed via Robot Web Server)"', shell=True)
+    except CalledProcessError:
         return jsonify({'status': 'error', 'message': 'failed to claim robot'})
 
-    result = subprocess.check_call('robot start -f', shell=True)
-    if (result != 0):
+    try:
+        subprocess.check_call('robot start -f', shell=True)
+    except CalledProcessError:
         return jsonify({'status': 'error', 'message': 'failed to start robot'})
 
     return jsonify({'status': 'success'})
 
 @blueprint.route('/stop', methods=['POST'])
 def stop_robot():
-    result = subprocess.check_call('robot stop -f', shell=True)
-    if (result != 0):
+    try:
+        subprocess.check_call('robot stop -f', shell=True)
+    except:
         return jsonify({'status': 'error', 'message': 'failed to stop robot'})
 
     return jsonify({'status': 'success'})
