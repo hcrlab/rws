@@ -38,13 +38,13 @@ def check_robot_claim():
         fp.close()
 
         # TODO(csu): need to modify this, depending on how active_user.yaml is formatted
-        return {
+        return jsonify({
             'status': 'success',
             'claim': content
-        }
+        })
     else:
-        return {
+        return jsonify({
             'status': 'error',
             'message': 'active user file not found',
             'claim': None
-        }
+        })
