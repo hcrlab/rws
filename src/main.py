@@ -32,6 +32,10 @@ rws_apps_lock.acquire()
 rws_apps = {x.package_name(): x for x in app_list}
 rws_apps_lock.release()
 
+# Include routes from blueprints
+from robot_start_stop import blueprint as robot_start_stop_blueprint
+app.register_blueprint(robot_start_stop_blueprint, url_prefix='/api/robot')
+
 for rws_app in app_list:
   blueprint = Blueprint(rws_app.package_name(), __name__,
       static_url_path='/app/{}'.format(rws_app.package_name()),
