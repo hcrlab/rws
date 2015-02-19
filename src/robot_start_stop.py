@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 import subprocess
 from subprocess import CalledProcessError
 import os
+import yaml
 
 blueprint = Blueprint('robot_start_stop', __name__)
 
@@ -32,15 +33,18 @@ def stop_robot():
 
 @blueprint.route('/check', methods=['GET'])
 def check_robot_claim():
-    if os.path.exists('/var/lib/robot/active_user.yaml'):
-        fp = open(filename, "r")
+    active_user_file = '/var/lib/robot/active_user.yaml'
+    if os.path.exists(active_user_file):
+        fp = open(active_user_file, "r")
         content = fp.read()
         fp.close()
+
+        data = yaml.load(content)
 
         # TODO(csu): need to modify this, depending on how active_user.yaml is formatted
         return jsonify({
             'status': 'success',
-            'claim': content
+            'claim': data
         })
     else:
         return jsonify({

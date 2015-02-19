@@ -44,8 +44,8 @@ for rws_app in app_list:
 
 # TODO(jstn): make websocket server url programmatic based on the port number.
 # TODO(jstn): randomize port number?
-websocket_server = WebsocketServer(9999)
-websocket_server.launch()
+# websocket_server = WebsocketServer(9999)
+# websocket_server.launch()
 
 def login_required(f):
   @wraps(f)
