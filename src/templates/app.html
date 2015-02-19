@@ -5,7 +5,8 @@
 {% block head %}
   {{ super() }}
   <script type="text/javascript">
-    var location = window.location.pathname;
+    var currentLocation = window.location.pathname;
+    var currentUser = '{{ user_identifier }}';
   </script>
   <script src="{{ url_for('static', filename='js/user_presence.js') }}"></script>
 {% endblock %}
