@@ -40,8 +40,7 @@ def check_robot_claim():
         fp.close()
 
         data = yaml.load(content)
-
-        # TODO(csu): need to modify this, depending on how active_user.yaml is formatted
+        
         return jsonify({
             'status': 'success',
             'claim': data
