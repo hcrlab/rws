@@ -5,9 +5,7 @@ window.onload = function(e) {
         user: currentUser,
         location: currentLocation
     },
-    function(data, status) {
-        console.log("Data: " + data + "\nStatus: " + status);
-    });
+    function(data, status) {});
 };
 
 window.onbeforeunload = function(e) {
@@ -15,7 +13,5 @@ window.onbeforeunload = function(e) {
         user: currentUser,
         location: currentLocation
     },
-    function(data, status) {
-        console.log("Data: " + data + "\nStatus: " + status);
-    });
+    function(data, status) {});
 };
