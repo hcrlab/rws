@@ -33,12 +33,9 @@ rws_apps = {x.package_name(): x for x in app_list}
 rws_apps_lock.release()
 
 # Include routes from blueprints
-<<<<<<< HEAD
 from robot_start_stop import blueprint as robot_start_stop_blueprint
 app.register_blueprint(robot_start_stop_blueprint, url_prefix='/api/robot')
 
-=======
->>>>>>> 520ef31ed76d3190c44b7c81f8b7159b118f416f
 from user_presence import blueprint as user_presence_blueprint
 app.register_blueprint(user_presence_blueprint, url_prefix='/api/user_presence')
 
@@ -50,8 +47,8 @@ for rws_app in app_list:
 
 # TODO(jstn): make websocket server url programmatic based on the port number.
 # TODO(jstn): randomize port number?
-# websocket_server = WebsocketServer(9999)
-# websocket_server.launch()
+websocket_server = WebsocketServer(9999)
+websocket_server.launch()
 
 def login_required(f):
   @wraps(f)
