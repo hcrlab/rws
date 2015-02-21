@@ -6,8 +6,9 @@ import yaml
 
 blueprint = Blueprint('robot_start_stop', __name__)
 
-@blueprint.route('/start', methods=['POST'])
-def claim_and_start_robot():
+@blueprint.route('/claim', methods=['POST'])
+@login_required
+def claim_robot():
     user = request.form['user']
 
     try:
@@ -15,12 +16,17 @@ def claim_and_start_robot():
     except CalledProcessError:
         return jsonify({'status': 'error', 'message': 'Failed to claim robot.'})
 
+    return jsonify({'status': 'success', 'message': 'Robot claimed.'})
+
+@blueprint.route('/start', methods=['POST'])
+def start_robot():
     try:
         subprocess.check_call('robot start -f', shell=True)
     except CalledProcessError:
         return jsonify({'status': 'error', 'message': 'Failed to start robot.'})
 
-    return jsonify({'status': 'success'})
+    return jsonify({'status': 'success', 'message': 'Robot started.'})
+
 
 @blueprint.route('/stop', methods=['POST'])
 def stop_robot():
