@@ -29,6 +29,7 @@ def start_robot():
 
 
 @blueprint.route('/stop', methods=['POST'])
+@login_required
 def stop_robot():
     try:
         subprocess.check_call('robot stop -f', shell=True)
@@ -38,6 +39,7 @@ def stop_robot():
     return jsonify({'status': 'success'})
 
 @blueprint.route('/check', methods=['GET'])
+@login_required
 def check_robot_claim():
     active_user_file = '/var/lib/robot/active_user.yaml'
 
