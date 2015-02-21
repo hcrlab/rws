@@ -19,6 +19,7 @@ def claim_robot():
     return jsonify({'status': 'success', 'message': 'Robot claimed.'})
 
 @blueprint.route('/start', methods=['POST'])
+@login_required
 def start_robot():
     try:
         subprocess.check_call('robot start -f', shell=True)
