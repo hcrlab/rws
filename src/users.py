@@ -1,4 +1,9 @@
 from enum import Enum
+from flask import render_template
+from flask import request
+from functools import wraps
+from identitytoolkit import gitkitclient
+import secrets
 
 class UserVerifierError(Enum):
   NO_COOKIE = 1
@@ -29,3 +34,29 @@ class UserVerifier(object):
       return gitkit_user.email, None
     else:
       return None, UserVerifierError.DISALLOWED_USER
+
+GITKIT_INSTANCE = gitkitclient.GitkitClient.FromConfigFile(
+  secrets.GITKIT_SERVER_CONFIG_PATH)
+USER_VERIFIER = UserVerifier(GITKIT_INSTANCE, secrets.ALLOWED_USERS)
+
+def login_required(f):
+  @wraps(f)
+  def decorated_function(*args, **kwargs):
+    email, error = USER_VERIFIER.check_user(request)
+    if email is None:
+      login_msgs = {
+        UserVerifierError.NO_COOKIE: 'Log in',
+        UserVerifierError.INVALID_TOKEN: 'Invalid login',
+        UserVerifierError.DISALLOWED_USER: 'Only approved users may log in'
+      }
+      text = ''
+      login_msg = login_msgs[error]
+
+      return render_template(
+        'login.html',
+        login_msg=login_msg,
+        SERVER_ORIGIN=secrets.SERVER_ORIGIN,
+      )
+    return f(*args, **kwargs)
+  return decorated_function
+

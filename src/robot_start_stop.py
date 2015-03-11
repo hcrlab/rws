@@ -1,13 +1,14 @@
 from flask import Blueprint, request, jsonify
-import subprocess
 from subprocess import CalledProcessError
 import os
+import subprocess
+import users
 import yaml
 
 blueprint = Blueprint('robot_start_stop', __name__)
 
 @blueprint.route('/claim', methods=['POST'])
-@login_required
+@users.login_required
 def claim_robot():
     user = request.form['user']
 
@@ -19,7 +20,7 @@ def claim_robot():
     return jsonify({'status': 'success', 'message': 'Robot claimed.'})
 
 @blueprint.route('/start', methods=['POST'])
-@login_required
+@users.login_required
 def start_robot():
     try:
         subprocess.check_call('robot start -f', shell=True)
@@ -30,7 +31,7 @@ def start_robot():
 
 
 @blueprint.route('/stop', methods=['POST'])
-@login_required
+@users.login_required
 def stop_robot():
     try:
         subprocess.check_call('robot stop -f', shell=True)
@@ -40,7 +41,7 @@ def stop_robot():
     return jsonify({'status': 'success'})
 
 @blueprint.route('/check', methods=['GET'])
-@login_required
+@users.login_required
 def check_robot_claim():
     active_user_file = '/var/lib/robot/active_user.yaml'
 
