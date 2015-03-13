@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<polymer-element name="rws-home" attributes="">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js">
+    </script>
+    <link type=text/css rel=stylesheet
+      href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+    <script type=text/javascript>
+      window.google.identitytoolkit.signInButton(
+        '#userbox', // accepts any CSS selector
+        {
+          widgetUrl: "{{ SERVER_ORIGIN }}/oauth2callback",
+          signOutUrl: "/",
+        }
+      );
+    </script>
+    <h1>Welcome</h1>
+    <p>Welcome! You are logged in. You can log out using the widget below.</p>
+    <div id="userbox"></div>
+  </template>
+  <script>
+    (function () {
+      Polymer({
+      });
+    })();
+  </script>
+</polymer-element>
