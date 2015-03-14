@@ -74,7 +74,7 @@ def app_controller(package_name):
     user, error = users.USER_VERIFIER.check_user(request)
     # TODO(csu): also add users to user presence set here
 
-    app_names = json.dumps([{'id': app.package_name(), 'name': app.name()} for app in app_list])
+    app_names = [{'id': app.package_name(), 'name': app.name()} for app in app_list]
 
     return render_template('app.html',
         app_name=app_name, app_id=package_name,
