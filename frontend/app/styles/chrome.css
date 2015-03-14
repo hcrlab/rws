@@ -1,0 +1,16 @@
+#navheader {
+  color: #fff;
+  background-color: #ffb300;
+}
+
+.content {
+  padding: 20px;
+}
+
+core-header-panel {
+  background-color: #eee;
+}
+
+.content {
+  background-color: #fff;
+}

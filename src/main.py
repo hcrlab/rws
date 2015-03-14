@@ -10,6 +10,7 @@ from websocket import WebsocketServer
 import apps
 import argparse
 import config
+import json
 import os
 import rospy
 import secrets
@@ -17,7 +18,7 @@ import sys
 import threading
 import users
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='dist', static_url_path='')
 
 app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
 app_list = app_manager.get_apps()
@@ -47,9 +48,13 @@ websocket_server.launch()
 @app.route('/', methods=['GET', 'POST'])
 @users.login_required
 def index():
-  return render_template('home.html', app_list=app_list,
-    current_tab='rws_welcome', SERVER_ORIGIN=secrets.SERVER_ORIGIN,
-    ROBOT_NAME=config.ROBOT_NAME)
+  user, error = users.USER_VERIFIER.check_user(request)
+  app_names = [{'id': app.package_name(), 'name': app.name()} for app in app_list]
+  return render_template('app.html',
+      app_name='Home', app_id='rws_home',
+      app_list=app_names, robot_name=config.ROBOT_NAME,
+      useremail=user.email, username=user.name if user.name is not None else '',
+      server_origin=secrets.SERVER_ORIGIN)
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -66,12 +71,16 @@ def app_controller(package_name):
     rws_apps_lock.release()
 
     # For user presence
-    email, error = users.USER_VERIFIER.check_user(request)
+    user, error = users.USER_VERIFIER.check_user(request)
     # TODO(csu): also add users to user presence set here
 
-    return render_template('app.html', current_tab=package_name,
-        app_list=app_list, rws_app=rws_app, ROBOT_NAME=config.ROBOT_NAME,
-        user_identifier=email)
+    app_names = json.dumps([{'id': app.package_name(), 'name': app.name()} for app in app_list])
+
+    return render_template('app.html',
+        app_name=app_name, app_id=package_name,
+        app_list=app_names, robot_name=config.ROBOT_NAME,
+        useremail=user.email, username=user.name if user.name is not None else '',
+        server_origin=secrets.SERVER_ORIGIN)
   else:
     return 'Error: no app named {}'.format(package_name)
 

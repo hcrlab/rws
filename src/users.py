@@ -19,7 +19,7 @@ class UserVerifier(object):
   def check_user(self, request):
     """Checks the user login cookie.
 
-    Returns: (email, error), Email is the string email address of the person who
+    Returns: (user, error), Email is the string email address of the person who
       logged in, or None if the login was invalid. Error is a UserVerifierError
       describing why the login was invalid, or None if the login was valid.
     """
@@ -31,7 +31,7 @@ class UserVerifier(object):
       return None, UserVerifierError.INVALID_TOKEN
 
     if gitkit_user.email in self._allowed_users:
-      return gitkit_user.email, None
+      return gitkit_user, None
     else:
       return None, UserVerifierError.DISALLOWED_USER
 
@@ -42,8 +42,8 @@ USER_VERIFIER = UserVerifier(GITKIT_INSTANCE, secrets.ALLOWED_USERS)
 def login_required(f):
   @wraps(f)
   def decorated_function(*args, **kwargs):
-    email, error = USER_VERIFIER.check_user(request)
-    if email is None:
+    user, error = USER_VERIFIER.check_user(request)
+    if user is None:
       login_msgs = {
         UserVerifierError.NO_COOKIE: 'Log in',
         UserVerifierError.INVALID_TOKEN: 'Invalid login',
