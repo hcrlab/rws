@@ -35,10 +35,14 @@
       #userbox paper-item a {
         color: rgba(0, 0, 0, 0.87);
       }
+      #navtoolbar {
+        color: #fff;
+        background-color: #ffc107;
+      }
     </style>
     <core-scaffold responsiveWidth="700px">
       <core-header-panel navigation flex mode="seamed">
-        <core-toolbar>
+        <core-toolbar id="navtoolbar">
           <span>Apps</span>
         </core-toolbar>
         <core-menu valueattr="appid" selected="{{appid}}">
@@ -94,7 +98,7 @@
         signOut: function() {
           document.cookie = 'gtoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
           window.location = '/';
-        }
+        },
       });
     })();
   </script>
