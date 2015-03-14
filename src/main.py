@@ -77,7 +77,7 @@ def app_controller(package_name):
     app_names = [{'id': app.package_name(), 'name': app.name()} for app in app_list]
 
     return render_template('app.html',
-        app_name=app_name, app_id=package_name,
+        app_name=rws_app.name(), app_id=package_name,
         app_list=app_names, robot_name=config.ROBOT_NAME,
         useremail=user.email, username=user.name if user.name is not None else '',
         server_origin=secrets.SERVER_ORIGIN)
