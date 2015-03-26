@@ -13,4 +13,4 @@ ALLOWED_USERS = [
     'example@example.com',
 ]
 
-CATKIN_WS = '~/rws/catkin_ws'
+CATKIN_WS = '/home/rosie/rws/catkin_ws'
