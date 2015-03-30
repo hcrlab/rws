@@ -9,8 +9,6 @@ BROWSER_API_KEY = 'AIza...'
 GITKIT_SERVER_CONFIG_PATH = '../resources/gitkit/gitkit-server-config.json'
 
 # List of users allowed to log in.
-ALLOWED_USERS = [
-    'example@example.com',
-]
+ALLOWED_USERS = ['example@example.com', ]
 
 CATKIN_WS = '/home/rosie/rws/catkin_ws'

@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+
 # TODO(jstn): If there are enough classes like these that duplicate roslaunch
 # functionality (see App), then make a separate Launcher class.
 class WebsocketServer(object):
@@ -14,6 +15,7 @@ class WebsocketServer(object):
     ...
     ws.terminate()
     """
+
     def __init__(self, port):
         self._port = port
         self._subprocess = None
@@ -25,9 +27,8 @@ class WebsocketServer(object):
         if self._subprocess is None:
             self._subprocess = subprocess.Popen(
                 ['roslaunch', 'rosbridge_server', 'rosbridge_websocket.launch',
-                'port:={}'.format(self._port)],
-                env=os.environ
-            )
+                 'port:={}'.format(self._port)],
+                env=os.environ)
 
     def terminate(self):
         self._subprocess.terminate()

@@ -7,17 +7,24 @@ import yaml
 
 blueprint = Blueprint('robot_start_stop', __name__)
 
+
 @blueprint.route('/claim', methods=['POST'])
 @users.login_required
 def claim_robot():
     user = request.form['user']
 
     try:
-        subprocess.check_call('robot claim -f --username ' + user + ' --email ' + user + ' -m "teleoperating the robot (claimed via Robot Web Server)"', shell=True)
+        subprocess.check_call(
+            'robot claim -f --username ' + user + ' --email ' + user +
+            ' -m "teleoperating the robot (claimed via Robot Web Server)"',
+            shell=True)
     except CalledProcessError:
-        return jsonify({'status': 'error', 'message': 'Failed to claim robot.'})
+        return jsonify(
+            {'status': 'error',
+             'message': 'Failed to claim robot.'})
 
     return jsonify({'status': 'success', 'message': 'Robot claimed.'})
+
 
 @blueprint.route('/start', methods=['POST'])
 @users.login_required
@@ -25,7 +32,9 @@ def start_robot():
     try:
         subprocess.check_call('robot start -f', shell=True)
     except CalledProcessError:
-        return jsonify({'status': 'error', 'message': 'Failed to start robot.'})
+        return jsonify(
+            {'status': 'error',
+             'message': 'Failed to start robot.'})
 
     return jsonify({'status': 'success', 'message': 'Robot started.'})
 
@@ -40,6 +49,7 @@ def stop_robot():
 
     return jsonify({'status': 'success'})
 
+
 @blueprint.route('/check', methods=['GET'])
 @users.login_required
 def check_robot_claim():
@@ -52,13 +62,13 @@ def check_robot_claim():
             content = fp.read()
             fp.close()
             data = yaml.load(content)
-            
-            return jsonify({
-                'status': 'success',
-                'claim': data
-            })
+
+            return jsonify({'status': 'success', 'claim': data})
         except:
-            return jsonify({'status': 'error', 'message': 'Failed to check robot claim.'})
+            return jsonify({
+                'status': 'error',
+                'message': 'Failed to check robot claim.'
+            })
 
     # if the file doesn't exist, then the robot is not claimed
     else:
