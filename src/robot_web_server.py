@@ -12,7 +12,8 @@ import users
 
 
 class RobotWebServer(object):
-    def __init__(self, app, app_manager, websocket_server, user_verifier, pr2_claimer):
+    def __init__(self, app, app_manager, websocket_server, user_verifier,
+                 pr2_claimer):
         """Initialize the web server with the given dependencies.
         Args:
           app: The Flask app instance.

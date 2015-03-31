@@ -21,7 +21,8 @@ def production():
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
     start_stop_blueprint = Blueprint('robot_start_stop', __name__)
     pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier, pr2_claimer)
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier,
+                            pr2_claimer)
     return server
 
 
@@ -36,7 +37,8 @@ def development():
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
     start_stop_blueprint = Blueprint('robot_start_stop', __name__)
     pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier, pr2_claimer)
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier,
+                            pr2_claimer)
     return server
 
 
@@ -49,7 +51,8 @@ def test():
     user_verifier = users.UserVerifier(None, [])
     start_stop_blueprint = Blueprint('robot_start_stop', __name__)
     pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier, pr2_claimer)
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier,
+                            pr2_claimer)
     server._app.config['TESTING'] = True
     server._app = server._app.test_client()
     return server

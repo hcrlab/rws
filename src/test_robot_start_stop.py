@@ -42,6 +42,5 @@ class TestRobotStartStop(unittest.TestCase):
         self.assertEquals('testuser', data['claim']['user'])
 
 
-
 if __name__ == '__main__':
     unittest.main()
