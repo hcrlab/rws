@@ -30,6 +30,16 @@ class TestRobotWebServer(unittest.TestCase):
         rv = self._server._app.get('/')
         self.assertTrue(user.email in rv.get_data())
 
+    def test_invalid_app(self):
+        """Check that a 404 is returned for invalid app names."""
+        user = type('User', (), {'email': 'test@email.com', 'name': None})()
+        self._server._user_verifier.check_user = mock.Mock(
+            return_value=(user, None))
+        rv = self._server._app.get('/app/testapp')
+        self.assertEqual(404, rv.status_code)
+        rv = self._server._app.get('/app/close/testapp')
+        self.assertEqual(404, rv.status_code)
+
 
 if __name__ == '__main__':
     unittest.main()

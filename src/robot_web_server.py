@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask import abort
 from flask import redirect
 from flask import render_template
 from flask import request
@@ -98,7 +99,7 @@ class RobotWebServer(object):
                 username=user.name if user.name is not None else '',
                 server_origin=secrets.SERVER_ORIGIN)
         else:
-            return 'Error: no app named {}'.format(package_name)
+            abort(404, 'No app named {}'.format(package_name))
 
     @users.login_required
     def app_close(self, package_name):
@@ -111,7 +112,7 @@ class RobotWebServer(object):
 
             return redirect(url_for('index'))
         else:
-            return 'Error: no app named {}'.format(package_name)
+            abort(404, 'No app named {}'.format(package_name))
 
     @users.login_required
     def websocket_url(self):
