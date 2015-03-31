@@ -1,26 +1,14 @@
-#!/usr/bin/env python
-
 from flask import Blueprint
-from flask import Flask
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-from identitytoolkit import gitkitclient
-from websocket import WebsocketServer
-import apps
-import argparse
-import config
-import json
-import os
-import rospy
-import secrets
-import sys
-import users
-
 from robot_start_stop import blueprint as robot_start_stop_blueprint
 from user_presence import blueprint as user_presence_blueprint
-
+import config
+import os
+import secrets
+import users
 
 class RobotWebServer(object):
     def __init__(self, app, app_manager, websocket_server, user_verifier):
@@ -65,8 +53,8 @@ class RobotWebServer(object):
 
     def run(self, host='localhost', port=5000, debug=False):
         """Runs the web server and launches the websocket server."""
-        #self._websocket_server.launch()
-        self._app.run(host='0.0.0.0', port=port, debug=args.debug)
+        self._websocket_server.launch()
+        self._app.run(host='0.0.0.0', port=port, debug=debug)
 
     @users.login_required
     def index(self):
@@ -127,23 +115,3 @@ class RobotWebServer(object):
     @users.login_required
     def websocket_url(self):
         return secrets.WEBSOCKET_URL
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Robot web server.')
-    parser.add_argument('--debug',
-                        type=bool,
-                        default=False,
-                        help='Whether to start the server in debug mode.')
-    sys.argv = rospy.myargv()
-    args = parser.parse_args()
-
-    app = Flask(__name__, static_folder='dist', static_url_path='')
-    app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
-    websocket_server = WebsocketServer(9999)
-    gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
-        secrets.GITKIT_SERVER_CONFIG_PATH)
-    user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
-
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
-    server.run(host='0.0.0.0', debug=args.debug)
