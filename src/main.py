@@ -6,6 +6,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+from identitytoolkit import gitkitclient
 from websocket import WebsocketServer
 import apps
 import argparse
@@ -15,111 +16,117 @@ import os
 import rospy
 import secrets
 import sys
-import threading
 import users
 
-app = Flask(__name__, static_folder='dist', static_url_path='')
-
-app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
-app_list = app_manager.get_apps()
-rws_apps_lock = threading.Lock()
-rws_apps_lock.acquire()
-rws_apps = {x.package_name(): x for x in app_list}
-rws_apps_lock.release()
-
-# Include routes from blueprints
 from robot_start_stop import blueprint as robot_start_stop_blueprint
-app.register_blueprint(robot_start_stop_blueprint, url_prefix='/api/robot')
-
 from user_presence import blueprint as user_presence_blueprint
-app.register_blueprint(user_presence_blueprint,
-                       url_prefix='/api/user_presence')
-
-for rws_app in app_list:
-    blueprint = Blueprint(
-        rws_app.package_name(), __name__,
-        static_url_path='/app/{}'.format(rws_app.package_name()),
-        static_folder=os.path.join(rws_app.package_path(), 'www'))
-    app.register_blueprint(blueprint)
-
-# TODO(jstn): make websocket server url programmatic based on the port number.
-# TODO(jstn): randomize port number?
-websocket_server = WebsocketServer(9999)
-websocket_server.launch()
 
 
-@app.route('/', methods=['GET', 'POST'])
-@users.login_required
-def index():
-    user, error = users.USER_VERIFIER.check_user(request)
-    app_names = [{'id': app.package_name(),
-                  'name': app.name()} for app in app_list]
-    return render_template('app.html',
-                           app_name='Home',
-                           app_id='rws_home',
-                           app_list=app_names,
-                           robot_name=config.ROBOT_NAME,
-                           useremail=user.email,
-                           username=user.name if user.name is not None else '',
-                           server_origin=secrets.SERVER_ORIGIN)
+class RobotWebServer(object):
+    def __init__(self, app, app_manager, websocket_server, user_verifier):
+        """Initialize the web server with the given dependencies.
+        Args:
+          app: The Flask app instance.
+          app_manager: The RWS app manager.
+          websocket_server: An instance of the websocket server.
+          user_verifier: An instance of a UserVerifier.
+        """
+        self._app = app
+        self._user_verifier = user_verifier
 
+        # Include routes for each app.
+        self._app_manager = app_manager
+        self._app_list = app_manager.get_apps()
+        self._rws_apps = {x.package_name(): x for x in self._app_list}
+        for rws_app in self._app_list:
+            blueprint = Blueprint(
+                rws_app.package_name(), __name__,
+                static_url_path='/app/{}'.format(rws_app.package_name()),
+                static_folder=os.path.join(rws_app.package_path(), 'www'))
+            self._app.register_blueprint(blueprint)
+        self._websocket_server = websocket_server
 
-@app.route('/oauth2callback')
-def oauth2callback():
-    return render_template('oauth2callback.html',
-                           BROWSER_API_KEY=secrets.BROWSER_API_KEY)
+        # Include routes from blueprints
+        self._app.register_blueprint(robot_start_stop_blueprint,
+                                     url_prefix='/api/robot')
+        self._app.register_blueprint(user_presence_blueprint,
+                                     url_prefix='/api/user_presence')
 
+        # Set up routes
+        self._app.add_url_rule('/', 'index', self.index)
+        self._app.add_url_rule('/oauth2callback', 'oauth2callback',
+                               self.oauth2callback)
+        self._app.add_url_rule('/app/<package_name>', 'app_controller',
+                               self.app_controller)
+        self._app.add_url_rule('/app/close/<package_name>', 'app_close',
+                               self.app_close)
+        self._app.add_url_rule('/get_websocket_url', 'websocket_url',
+                               self.websocket_url)
 
-@app.route('/app/<package_name>')
-@users.login_required
-def app_controller(package_name):
-    if package_name in rws_apps:
-        rws_apps_lock.acquire()
-        rws_app = rws_apps[package_name]
-        rws_app.launch()
-        rws_apps_lock.release()
+    def run(self, host='localhost', port=5000, debug=False):
+        """Runs the web server and launches the websocket server."""
+        #self._websocket_server.launch()
+        self._app.run(host='0.0.0.0', port=port, debug=args.debug)
 
-        # For user presence
-        user, error = users.USER_VERIFIER.check_user(request)
-        # TODO(csu): also add users to user presence set here
-
+    @users.login_required
+    def index(self):
+        user, error = self._user_verifier.check_user(request)
         app_names = [{'id': app.package_name(),
-                      'name': app.name()} for app in app_list]
-
+                      'name': app.name()} for app in self._app_list]
         return render_template(
             'app.html',
-            app_name=rws_app.name(),
-            app_id=package_name,
+            app_name='Home',
+            app_id='rws_home',
             app_list=app_names,
             robot_name=config.ROBOT_NAME,
             useremail=user.email,
             username=user.name if user.name is not None else '',
             server_origin=secrets.SERVER_ORIGIN)
-    else:
-        return 'Error: no app named {}'.format(package_name)
 
+    def oauth2callback(self):
+        return render_template('oauth2callback.html',
+                               BROWSER_API_KEY=secrets.BROWSER_API_KEY)
 
-@app.route('/app/close/<package_name>')
-@users.login_required
-def app_close(package_name):
-    if package_name in rws_apps:
-        rws_apps_lock.acquire()
-        rws_app = rws_apps[package_name]
-        if rws_app.is_running():
-            rws_app.terminate()
-        rws_apps_lock.release()
+    @users.login_required
+    def app_controller(self, package_name):
+        if package_name in self._rws_apps:
+            rws_app = self._rws_apps[package_name]
+            rws_app.launch()
 
-        # TODO(csu): also remove users from user presence set here
+            # For user presence
+            user, error = self._user_verifier.check_user(request)
+            # TODO(csu): also add users to user presence set here
+            app_names = [{'id': app.package_name(),
+                          'name': app.name()} for app in self._app_list]
 
-        return redirect(url_for('index'))
-    else:
-        return 'Error: no app named {}'.format(package_name)
+            return render_template(
+                'app.html',
+                app_name=rws_app.name(),
+                app_id=package_name,
+                app_list=app_names,
+                robot_name=config.ROBOT_NAME,
+                useremail=user.email,
+                username=user.name if user.name is not None else '',
+                server_origin=secrets.SERVER_ORIGIN)
+        else:
+            return 'Error: no app named {}'.format(package_name)
 
+    @users.login_required
+    def app_close(self, package_name):
+        if package_name in self._rws_apps:
+            rws_app = self._rws_apps[package_name]
+            if rws_app.is_running():
+                rws_app.terminate()
 
-@app.route('/get_websocket_url')
-@users.login_required
-def websocket_url():
-    return secrets.WEBSOCKET_URL
+            # TODO(csu): also remove users from user presence set here
+
+            return redirect(url_for('index'))
+        else:
+            return 'Error: no app named {}'.format(package_name)
+
+    @users.login_required
+    def websocket_url(self):
+        return secrets.WEBSOCKET_URL
 
 
 if __name__ == '__main__':
@@ -131,4 +138,12 @@ if __name__ == '__main__':
     sys.argv = rospy.myargv()
     args = parser.parse_args()
 
-    app.run(host='0.0.0.0', debug=args.debug)
+    app = Flask(__name__, static_folder='dist', static_url_path='')
+    app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
+    websocket_server = WebsocketServer(9999)
+    gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
+        secrets.GITKIT_SERVER_CONFIG_PATH)
+    user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
+
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
+    server.run(host='0.0.0.0', debug=args.debug)
