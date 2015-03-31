@@ -1,6 +1,7 @@
 import mock
 import server_factory
 import unittest
+import users
 
 
 class TestRobotWebServer(unittest.TestCase):
@@ -16,6 +17,18 @@ class TestRobotWebServer(unittest.TestCase):
                                                  port='1234',
                                                  debug=True)
         self._server._websocket_server.launch.assert_called_with()
+
+    def test_login_index(self):
+        """Check that login is required for the home page."""
+        self._server._user_verifier.check_user = mock.Mock(
+            return_value=(None, users.UserVerifierError.NO_COOKIE))
+        rv = self._server._app.get('/')
+        self.assertTrue('Apps' not in rv.get_data())
+        user = type('User', (), {'email': 'test@email.com', 'name': None})()
+        self._server._user_verifier.check_user = mock.Mock(
+            return_value=(user, None))
+        rv = self._server._app.get('/')
+        self.assertTrue(user.email in rv.get_data())
 
 
 if __name__ == '__main__':
