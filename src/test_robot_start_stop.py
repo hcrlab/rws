@@ -20,7 +20,12 @@ class TestRobotStartStop(unittest.TestCase):
 
     def test_login(self):
         """Check that the robot can't be claimed without logging in."""
-        pass
+        rv = self._server._app.get('/api/robot/check')
+        self.assertTrue('Log in' in rv.data)
+
+        self.mock_login()
+        rv = self._server._app.get('/api/robot/check')
+        self.assertFalse('Log in' in rv.data)
 
     def test_check(self):
         """Tests the check method in the common case."""
