@@ -30,7 +30,7 @@ class Pr2Claimer(object):
         try:
             subprocess.check_call(
                 'robot claim -f --username ' + user + ' --email ' + user +
-                ' -m "teleoperating the robot (claimed via Robot Web Server)"',
+                ' -m "Claimed via Robot Web Server"',
                 shell=True)
         except CalledProcessError:
             return jsonify(
@@ -69,9 +69,7 @@ class Pr2Claimer(object):
         if os.path.exists(active_user_file):
             try:
                 fp = open(active_user_file, 'r')
-                content = fp.read()
-                fp.close()
-                data = yaml.load(content)
+                data = yaml.load(fp)
 
                 return jsonify({'status': 'success', 'claim': data})
             except:
