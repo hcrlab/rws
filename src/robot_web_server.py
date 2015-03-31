@@ -4,7 +4,6 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-from robot_start_stop import blueprint as robot_start_stop_blueprint
 from user_presence import blueprint as user_presence_blueprint
 import config
 import os
@@ -13,13 +12,14 @@ import users
 
 
 class RobotWebServer(object):
-    def __init__(self, app, app_manager, websocket_server, user_verifier):
+    def __init__(self, app, app_manager, websocket_server, user_verifier, pr2_claimer):
         """Initialize the web server with the given dependencies.
         Args:
           app: The Flask app instance.
           app_manager: The RWS app manager.
           websocket_server: An instance of the websocket server.
           user_verifier: An instance of a UserVerifier.
+          pr2_claimer: An instance of Pr2Claimer.
         """
         self._app = app
         self._user_verifier = user_verifier
@@ -37,7 +37,8 @@ class RobotWebServer(object):
         self._websocket_server = websocket_server
 
         # Include routes from blueprints
-        self._app.register_blueprint(robot_start_stop_blueprint,
+        self._pr2_claimer = pr2_claimer
+        self._app.register_blueprint(pr2_claimer.blueprint(),
                                      url_prefix='/api/robot')
         self._app.register_blueprint(user_presence_blueprint,
                                      url_prefix='/api/user_presence')

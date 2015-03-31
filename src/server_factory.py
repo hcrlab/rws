@@ -1,8 +1,10 @@
 from enum import Enum
+from flask import Blueprint
 from flask import Flask
 from identitytoolkit import gitkitclient
 from robot_web_server import RobotWebServer
 from websocket import WebsocketServer
+from robot_start_stop import Pr2Claimer
 import apps
 import users
 import secrets
@@ -17,7 +19,9 @@ def production():
     gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
         secrets.GITKIT_SERVER_CONFIG_PATH)
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
+    start_stop_blueprint = Blueprint('robot_start_stop', __name__)
+    pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier, pr2_claimer)
     return server
 
 
@@ -30,7 +34,9 @@ def development():
     gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
         secrets.GITKIT_SERVER_CONFIG_PATH)
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
+    start_stop_blueprint = Blueprint('robot_start_stop', __name__)
+    pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier, pr2_claimer)
     return server
 
 
@@ -41,7 +47,9 @@ def test():
     app_manager = apps.AppManager(catkin_ws=None)
     websocket_server = WebsocketServer(9999)
     user_verifier = users.UserVerifier(None, [])
-    server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
+    start_stop_blueprint = Blueprint('robot_start_stop', __name__)
+    pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier, pr2_claimer)
     server._app.config['TESTING'] = True
     server._app = server._app.test_client()
     return server
