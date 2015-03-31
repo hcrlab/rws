@@ -54,7 +54,7 @@ class RobotWebServer(object):
     def run(self, host='localhost', port=5000, debug=False):
         """Runs the web server and launches the websocket server."""
         self._websocket_server.launch()
-        self._app.run(host='0.0.0.0', port=port, debug=debug)
+        self._app.run(host=host, port=port, debug=debug)
 
     @users.login_required
     def index(self):
