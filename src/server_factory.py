@@ -32,3 +32,16 @@ def development():
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
     server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
     return server
+
+def test():
+    """Test server. Most likely many of the objects will be mocked anyway.
+    """
+    app = Flask(__name__, static_folder='dist', static_url_path='')
+    app_manager = apps.AppManager(catkin_ws=None)
+    websocket_server = WebsocketServer(9999)
+    user_verifier = users.UserVerifier(None, [])
+    server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
+    server._app.config['TESTING'] = True
+    server._app = server._app.test_client()
+    return server
+
