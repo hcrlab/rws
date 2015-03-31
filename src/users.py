@@ -17,6 +17,7 @@ LOGIN_MSGS = {
     UserVerifierError.DISALLOWED_USER: 'Only approved users may log in'
 }
 
+
 class UserVerifier(object):
     """Verifies user login using Google Identity Toolkit."""
 
@@ -51,6 +52,7 @@ def login_required(f):
     Assumes that the first argument is an instance (self) that has a
     UserVerifier as self._user_verifier.
     """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         self = args[0]
@@ -62,4 +64,5 @@ def login_required(f):
                                    login_msg=login_msg,
                                    SERVER_ORIGIN=secrets.SERVER_ORIGIN)
         return f(*args, **kwargs)
+
     return decorated_function

@@ -10,6 +10,7 @@ import os
 import secrets
 import users
 
+
 class RobotWebServer(object):
     def __init__(self, app, app_manager, websocket_server, user_verifier):
         """Initialize the web server with the given dependencies.

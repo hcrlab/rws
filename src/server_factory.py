@@ -33,6 +33,7 @@ def development():
     server = RobotWebServer(app, app_manager, websocket_server, user_verifier)
     return server
 
+
 def test():
     """Test server. Most likely many of the objects will be mocked anyway.
     """
@@ -44,4 +45,3 @@ def test():
     server._app.config['TESTING'] = True
     server._app = server._app.test_client()
     return server
-
