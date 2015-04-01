@@ -39,6 +39,9 @@
         color: #fff;
         background-color: #ffc107;
       }
+      .closebutton {
+        margin-left: 15px;
+      }
     </style>
     <core-scaffold responsiveWidth="700px">
       <core-header-panel navigation flex mode="seamed">
@@ -75,7 +78,7 @@
         </template>
         <template if="{{appid !== 'rws_home'}}">
           <div layout vertical style="height: 100%">
-            <p><a href="/app/close/{{appid}}">Close this app</a></p>
+            <a href="/app/close/{{appid}}" class="closebutton">Close this app</a>
             <iframe seamless src="/app/{{appid}}/index.html" width="100%" height="100%" style="border: none">
             </iframe>
           </div>
