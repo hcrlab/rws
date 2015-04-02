@@ -115,3 +115,10 @@ class RobotWebServer(object):
     def websocket_url(self):
         return 'ws://{}:{}'.format(secrets.HOST_NAME,
                                    self._websocket_server.port())
+
+    @users.login_required
+    def is_started(self):
+        try:
+            return '1' if '/robot_state_publisher' in rosnode.get_node_names() else '0'
+        except:
+            return '0'
