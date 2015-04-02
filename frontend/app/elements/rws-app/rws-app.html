@@ -1,12 +1,15 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
 <link rel="import" href="../../bower_components/core-header-panel/core-header-panel.html">
 <link rel="import" href="../../bower_components/core-item/core-item.html">
 <link rel="import" href="../../bower_components/core-menu/core-menu.html">
 <link rel="import" href="../../bower_components/core-scaffold/core-scaffold.html">
 <link rel="import" href="../../bower_components/core-selector/core-selector.html">
 <link rel="import" href="../../bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-dropdown/paper-dropdown.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-action-dialog.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../elements/rws-home/rws-home.html">
 
@@ -48,6 +51,23 @@
         margin-left: 15px;
       }
     </style>
+    <core-ajax
+      auto
+      url="/api/robot/is_started"
+      handleAs="text"
+      on-core-response="{{handleStartState}}">
+    </core-ajax>
+    <core-ajax
+      id="starter"
+      url="/api/robot/start"
+      handleAs="text"
+      method="POST"
+      on-core-response="{{handleStartResponse}}">
+    </core-ajax> 
+    <paper-action-dialog opened="{{!isRobotStarted}}" heading="The robot needs to be started">
+      <p>The robot is currently in hibernation. Press "Start" below to start the robot.</p>
+      <paper-button raised affirmative style="background-color: #4caf50; color: #fff" on-click="{{startRobot}}">Start</paper-button>
+    </paper-action-dialog>
     <core-scaffold responsiveWidth="700px">
       <core-header-panel navigation flex mode="seamed">
         <core-toolbar id="navtoolbar">
@@ -96,12 +116,27 @@
       Polymer({
         applist: {},
         userDisplay: '', // Either the user's name (preferred) or the user's email.
+        websocketUrl: '', // The websocket URL.
+        isRobotStarted: false,
+
         ready: function() {
           if (this.username) {
             this.userDisplay = this.username;
           } else {
             this.userDisplay = this.useremail;
           }
+        },
+        handleStartState: function(e, detail, sender) {
+          //this.isRobotStarted = detail.response === '1';
+          this.isRobotStarted = false;
+        },
+        startRobot: function() {
+          this.$.starter.go();
+        },
+        // Called when the robot start API responds.
+        // It returns a JSON message with "status" either set to "success" or "error".
+        handleStartResponse: function(e, detail, sender) {
+          console.log(detail);
         },
         signOut: function() {
           document.cookie = 'gtoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC';

@@ -7,6 +7,7 @@ from flask import url_for
 from user_presence import blueprint as user_presence_blueprint
 import config
 import os
+import rosnode
 import secrets
 import users
 
@@ -54,6 +55,8 @@ class RobotWebServer(object):
                                self.app_close)
         self._app.add_url_rule('/get_websocket_url', 'websocket_url',
                                self.websocket_url)
+        self._app.add_url_rule('/api/robot/is_started', 'is_started',
+                               self.is_started)
 
     @users.login_required
     def index(self):
@@ -115,3 +118,7 @@ class RobotWebServer(object):
     def websocket_url(self):
         return 'ws://{}:{}'.format(secrets.HOST_NAME,
                                    self._websocket_server.port())
+
+    @users.login_required
+    def is_started(self):
+        return '1' if '/robot_state_publisher' in rosnode.get_node_names() else '0'
