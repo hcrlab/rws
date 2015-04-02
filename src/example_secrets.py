@@ -1,6 +1,6 @@
 # The protocol, server, and port we are serving this site under.
 SERVER_ORIGIN = 'localhost:5000'
-WEBSOCKET_URL = 'ws://localhost:9999'
+HOST_NAME = 'localhost'
 
 # Not really a secret, but it's probably better to leave it out of source
 # control. API key for the OAuth 2 callback.

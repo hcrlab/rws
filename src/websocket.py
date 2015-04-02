@@ -20,6 +20,9 @@ class WebsocketServer(object):
         self._port = port
         self._subprocess = None
 
+    def port(self):
+        return self._port
+
     def is_running(self):
         return self._subprocess is not None
 

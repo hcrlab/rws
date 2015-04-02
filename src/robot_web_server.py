@@ -113,4 +113,5 @@ class RobotWebServer(object):
 
     @users.login_required
     def websocket_url(self):
-        return secrets.WEBSOCKET_URL
+        return 'ws://{}:{}'.format(secrets.HOST_NAME,
+                                   self._websocket_server.port())
