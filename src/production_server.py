@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """Production server launch file.
 
 In production, RWS runs on Apache with mod_wsgi, so we need to do our
