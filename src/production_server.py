@@ -11,4 +11,3 @@ import server_factory
 server = server_factory.production()
 server._websocket_server.launch()
 app = server._app
-server._websocket_server.launch()
