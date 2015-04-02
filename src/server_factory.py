@@ -28,6 +28,9 @@ def production():
 
 def development():
     """Development server that uses port 9999 for the websocket server.
+
+    We use a different port number because we could be developing on the robot
+    itself.
     """
     app = Flask(__name__, static_folder='dist', static_url_path='')
     app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
