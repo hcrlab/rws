@@ -55,11 +55,6 @@ class RobotWebServer(object):
         self._app.add_url_rule('/get_websocket_url', 'websocket_url',
                                self.websocket_url)
 
-    def run(self, host='localhost', port=5000, debug=False):
-        """Runs the web server and launches the websocket server."""
-        self._websocket_server.launch()
-        self._app.run(host=host, port=port, debug=debug)
-
     @users.login_required
     def index(self):
         user, error = self._user_verifier.check_user(request)

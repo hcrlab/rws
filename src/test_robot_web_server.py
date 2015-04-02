@@ -16,16 +16,6 @@ class TestRobotWebServer(unittest.TestCase):
             return_value=(user, None))
         return user
 
-    def test_run(self):
-        """Check that the Flask app and the Websocket server are run."""
-        self._server._app.run = mock.Mock()
-        self._server._websocket_server.launch = mock.Mock()
-        self._server.run(host='testhost', port='1234', debug=True)
-        self._server._app.run.assert_called_with(host='testhost',
-                                                 port='1234',
-                                                 debug=True)
-        self._server._websocket_server.launch.assert_called_with()
-
     def test_login_index(self):
         """Check that login is required for the home page."""
         self._server._user_verifier.check_user = mock.Mock(
