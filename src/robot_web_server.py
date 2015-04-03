@@ -121,4 +121,7 @@ class RobotWebServer(object):
 
     @users.login_required
     def is_started(self):
-        return '1' if '/robot_state_publisher' in rosnode.get_node_names() else '0'
+        try:
+            return '1' if '/robot_state_publisher' in rosnode.get_node_names() else '0'
+        except:
+            return '0'
