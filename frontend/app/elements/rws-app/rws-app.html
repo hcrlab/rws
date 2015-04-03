@@ -11,6 +11,7 @@
 <link rel="import" href="../../bower_components/paper-dropdown/paper-dropdown.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-action-dialog.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../elements/rws-home/rws-home.html">
 
 <polymer-element name="rws-app" attributes="appname appid applist robotname serverorigin useremail username">
@@ -64,8 +65,19 @@
       method="POST"
       on-core-response="{{handleStartResponse}}">
     </core-ajax> 
-    <paper-action-dialog opened="{{!isRobotStarted}}" heading="The robot needs to be started">
-      <p>The robot is currently in hibernation. Press "Start" below to start the robot.</p>
+    <paper-action-dialog id="startDialog" backdrop opened="{{!isRobotStarted}}" heading="The robot needs to be started">
+      <template if="{{startState == 'Not started'}}">
+        <p>The robot is currently in hibernation. Press "Start" below to start the robot.</p>
+      </template>
+      <template if="{{startState == 'Starting'}}">
+        <div class="startingSpinner" style="min-width: 300px; min-height: 150px; text-align: center;">
+          <p>Starting...</p>
+          <paper-spinner active class="spinner"></paper-spinner>
+        </div>
+      </template>
+      <template if="{{startState == 'Error'}}">
+        <p>There was an error starting the robot.</p>
+      </template>
       <paper-button raised affirmative style="background-color: #4caf50; color: #fff" on-click="{{startRobot}}">Start</paper-button>
     </paper-action-dialog>
     <core-scaffold responsiveWidth="700px">
@@ -118,6 +130,7 @@
         userDisplay: '', // Either the user's name (preferred) or the user's email.
         websocketUrl: '', // The websocket URL.
         isRobotStarted: false,
+        startState: 'Not started',
 
         ready: function() {
           if (this.username) {
@@ -127,16 +140,25 @@
           }
         },
         handleStartState: function(e, detail, sender) {
-          //this.isRobotStarted = detail.response === '1';
+          this.isRobotStarted = detail.response === '1';
           this.isRobotStarted = false;
         },
         startRobot: function() {
           this.$.starter.go();
+          this.startState = 'Starting';
+        },
+        startStateChanged: function() {
+          this.$.startDialog.notifyResize();
         },
         // Called when the robot start API responds.
         // It returns a JSON message with "status" either set to "success" or "error".
         handleStartResponse: function(e, detail, sender) {
-          console.log(detail);
+          var resp = JSON.parse(detail.response) 
+          if (resp.status === "success") {
+            this.isRobotStarted = true;
+          } else {
+            this.startState = 'Error';
+          }
         },
         signOut: function() {
           document.cookie = 'gtoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
