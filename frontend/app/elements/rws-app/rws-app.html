@@ -63,7 +63,8 @@
       url="/api/robot/start"
       handleAs="text"
       method="POST"
-      on-core-response="{{handleStartResponse}}">
+      on-core-response="{{handleStartResponse}}"
+      on-core-error="{{handleStartError}}">
     </core-ajax> 
     <paper-action-dialog id="startDialog" backdrop opened="{{!isRobotStarted}}" heading="The robot needs to be started">
       <template if="{{startState == 'Not started'}}">
@@ -71,7 +72,7 @@
       </template>
       <template if="{{startState == 'Starting'}}">
         <div class="startingSpinner" style="min-width: 300px; min-height: 150px; text-align: center;">
-          <p>Starting...</p>
+          <p>Starting... This takes about 30 seconds or more.</p>
           <paper-spinner active class="spinner"></paper-spinner>
         </div>
       </template>
@@ -129,8 +130,8 @@
         applist: {},
         userDisplay: '', // Either the user's name (preferred) or the user's email.
         websocketUrl: '', // The websocket URL.
-        isRobotStarted: false,
-        startState: 'Not started',
+        isRobotStarted: true,
+        startState: 'Started',
 
         ready: function() {
           if (this.username) {
@@ -141,7 +142,9 @@
         },
         handleStartState: function(e, detail, sender) {
           this.isRobotStarted = detail.response === '1';
-          this.isRobotStarted = false;
+          if (!this.isRobotStarted) {
+            this.startState = 'Not started';
+          }
         },
         startRobot: function() {
           this.$.starter.go();
@@ -156,9 +159,20 @@
           var resp = JSON.parse(detail.response) 
           if (resp.status === "success") {
             this.isRobotStarted = true;
+            this.startState = 'Started';
           } else {
             this.startState = 'Error';
           }
+        },
+        handleStartError: function(e, detail, sender) {
+          // TODO(jstn): Figure out why the endpoint gives us a 500, but the
+          // robot starts successfully anyway.
+          var that = this;
+          function callback() {
+            that.isRobotStarted = true;
+            that.startState = 'Started';
+          }
+          setTimeout(callback, 20000);
         },
         signOut: function() {
           document.cookie = 'gtoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC';
