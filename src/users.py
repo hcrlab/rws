@@ -32,18 +32,21 @@ class UserVerifier(object):
       logged in, or None if the login was invalid. Error is a UserVerifierError
       describing why the login was invalid, or None if the login was valid.
     """
-        if 'gtoken' not in request.cookies:
-            return None, UserVerifierError.NO_COOKIE
+        # TODO(jstn): restore this check when login is enabled.
+        user = type('User', (), {'email': 'kb@c1', 'name': 'KB'})()
+        return user, None
+        #if 'gtoken' not in request.cookies:
+        #    return None, UserVerifierError.NO_COOKIE
 
-        gitkit_user = self._gitkit_client.VerifyGitkitToken(
-            request.cookies['gtoken'])
-        if gitkit_user is None:
-            return None, UserVerifierError.INVALID_TOKEN
+        #gitkit_user = self._gitkit_client.VerifyGitkitToken(
+        #    request.cookies['gtoken'])
+        #if gitkit_user is None:
+        #    return None, UserVerifierError.INVALID_TOKEN
 
-        if gitkit_user.email in self._allowed_users:
-            return gitkit_user, None
-        else:
-            return None, UserVerifierError.DISALLOWED_USER
+        #if gitkit_user.email in self._allowed_users:
+        #    return gitkit_user, None
+        #else:
+        #    return None, UserVerifierError.DISALLOWED_USER
 
 
 def login_required(f):
