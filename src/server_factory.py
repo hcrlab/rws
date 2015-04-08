@@ -15,7 +15,7 @@ def production():
     """
     app = Flask(__name__, static_folder='dist', static_url_path='')
     app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
-    websocket_server = WebsocketServer(9090)
+    websocket_server = WebsocketServer(9999)
     gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
         secrets.GITKIT_SERVER_CONFIG_PATH)
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
@@ -34,7 +34,7 @@ def development():
     """
     app = Flask(__name__, static_folder='dist', static_url_path='')
     app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
-    websocket_server = WebsocketServer(9999)
+    websocket_server = WebsocketServer(9090)
     gitkit_instance = gitkitclient.GitkitClient.FromConfigFile(
         secrets.GITKIT_SERVER_CONFIG_PATH)
     user_verifier = users.UserVerifier(gitkit_instance, secrets.ALLOWED_USERS)
@@ -50,7 +50,7 @@ def test():
     """
     app = Flask(__name__, static_folder='dist', static_url_path='')
     app_manager = apps.AppManager(catkin_ws=None)
-    websocket_server = WebsocketServer(9999)
+    websocket_server = WebsocketServer(9090)
     user_verifier = users.UserVerifier(None, [])
     start_stop_blueprint = Blueprint('robot_start_stop', __name__)
     pr2_claimer = Pr2Claimer(start_stop_blueprint, user_verifier)
