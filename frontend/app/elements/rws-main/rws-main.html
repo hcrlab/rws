@@ -1,0 +1,233 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="rws-main">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+      }
+      #drawerToolbar {
+        color: var(--secondary-text-color);
+        background-color: var(--drawer-menu-color);
+        border-bottom: var(--drawer-toolbar-border-color);
+      }
+
+      paper-scroll-header-panel {
+        height: 100%;
+      }
+
+      paper-material {
+        border-radius: 2px;
+        height: 100%;
+        padding: 16px 0 16px 0;
+        width: calc(98.66% - 16px);
+        margin: 16px auto;
+        background: white;
+      }
+
+      paper-menu iron-icon {
+        margin-right: 33px;
+        opacity: 0.54;
+      }
+
+      paper-menu .iron-selected {
+        color: var(--default-primary-color);
+      }
+
+      paper-menu a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-decoration: none;
+        color: var(--menu-link-color);
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        min-height: 48px;
+        padding: 0 16px;
+      }
+
+      paper-toolbar .app-name {
+        font-size: 20px;
+        font-weight: 400;
+        /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+
+      #mainToolbar .middle-container  {
+        height: 100%;
+        width: 100%;
+      }
+
+      #mainToolbar:not(.tall) .middle {
+        font-size: 18px;
+        padding-bottom: 0;
+      }
+
+      #mainToolbar .bottom {
+        margin-left: 48px;
+        /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+      #mainToolbar a {
+        color: #fff;
+      }
+
+      /* Height of the scroll area */
+      .content {
+      }
+
+      #toast .toast-hide-button {
+        color: #eeff41;
+        margin: 10px;
+      }
+
+      /* Breakpoints */
+
+      /* Small */
+      @media (max-width: 600px) {
+
+        paper-material {
+          --menu-container-display: none;
+          width: calc(97.33% - 32px);
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        paper-toolbar .app-name {
+          font-size: 16px;
+          font-weight: 400;
+        }
+
+        .user {
+          font-size: 12px;
+        }
+
+        #drawer .paper-toolbar {
+          margin-left: 16px;
+        }
+
+      }
+
+      /* Tablet+ */
+      @media (min-width: 601px) {
+
+        paper-material {
+          width: calc(98% - 46px);
+          margin-bottom: 32px;
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+
+        #drawer.paper-drawer-panel > [drawer] {
+          border-right: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        iron-pages {
+          /*padding: 48px 62px;*/
+        }
+
+        .user {
+          float: right;
+        }
+      }
+    </style>
+    <!--google-signin-aware id="googleSignin" client-id="{{googleClientId}}" scopes="profile email" isAuthorized="{{isSignedIn}}"></google-signin-aware-->
+    <template is="dom-if" if="{{!isSignedIn}}" restamp="true">
+      <rws-signin google-client-id="{{googleClientId}}" on-rws-signin="onAsdf"></rws-signin>
+    </template>
+
+    <template is="dom-if" if="{{isSignedIn}}" restamp="true">
+    <paper-drawer-panel id="paperDrawerPanel">
+      <paper-scroll-header-panel drawer fixed>
+        <paper-toolbar id="drawerToolbar">
+          <span class="paper-font-title">Apps</span>
+        </paper-toolbar>
+        <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}">
+          <a data-route="home" href="{{baseUrl}}">
+            <iron-icon icon="home"></iron-icon>
+            <span>Home</span>
+          </a>
+          <a data-route="settings" href="{{baseUrl}}settings">
+            <iron-icon icon="settings"></iron-icon>
+            <span>Settings</span>
+          </a>
+        </paper-menu>
+      </paper-scroll-header-panel>
+
+      <paper-scroll-header-panel main id="headerPanelMain" fixed>
+        <paper-toolbar id="mainToolbar">
+          <div class="middle middle-container center horizontal layout">
+            <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+              <div class="app-name">Robot Web Server</div>
+              <div class="flex"></div>
+              <div class="user">
+                <google-signin id="signout-button" scopes="profile email" theme="light" on-tap="onAsdf2"></google-signin>
+              </div>
+          </div>
+        </paper-toolbar>
+
+        <div class="content">
+          <iron-pages attr-for-selected="data-route" selected="{{route}}">
+            <section data-route="home">
+              Home 
+            </section>
+            <section data-route="settings">
+              Settings
+            </section>
+          </iron-pages>
+        </div>
+      </paper-scroll-header-panel>
+    </paper-drawer-panel>
+    </template>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'rws-main',
+      properties: {
+        googleClientId: String,
+        baseUrl: {
+          type: String,
+          value: '/',
+        },
+        route: {
+          type: String,
+          value: 'home',
+          notify: true,
+        },
+        isSignedIn: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
+      onAsdf: function() {
+        console.log('signin called!');
+        this.isSignedIn = true;
+      },
+      onAsdf2: function() {
+        console.log('signOut called!');
+        this.isSignedIn = false;
+      }
+    });
+  })();
+  </script>
+</dom-module>

@@ -13,13 +13,11 @@ import users
 
 
 class RobotWebServer(object):
-    def __init__(self, app, app_manager, websocket_server, user_verifier,
-                 pr2_claimer):
+    def __init__(self, app, app_manager, user_verifier, pr2_claimer):
         """Initialize the web server with the given dependencies.
         Args:
           app: The Flask app instance.
           app_manager: The RWS app manager.
-          websocket_server: An instance of the websocket server.
           user_verifier: An instance of a UserVerifier.
           pr2_claimer: An instance of Pr2Claimer.
         """
@@ -36,7 +34,6 @@ class RobotWebServer(object):
                 static_url_path='/app/{}'.format(rws_app.package_name()),
                 static_folder=os.path.join(rws_app.package_path(), 'www'))
             self._app.register_blueprint(blueprint)
-        self._websocket_server = websocket_server
 
         # Include routes from blueprints
         self._pr2_claimer = pr2_claimer
@@ -46,9 +43,7 @@ class RobotWebServer(object):
                                      url_prefix='/api/user_presence')
 
         # Set up routes
-        self._app.add_url_rule('/', 'index', self.index)
-        self._app.add_url_rule('/oauth2callback', 'oauth2callback',
-                               self.oauth2callback)
+        self._app.add_url_rule('/signin', 'signin', self.signin)
         self._app.add_url_rule('/app/<package_name>', 'app_controller',
                                self.app_controller)
         self._app.add_url_rule('/app/close/<package_name>', 'app_close',
@@ -57,25 +52,23 @@ class RobotWebServer(object):
                                self.websocket_url)
         self._app.add_url_rule('/api/robot/is_started', 'is_started',
                                self.is_started)
+        self._app.add_url_rule('/api/web/google_client_id', 'google_client_id', self.google_client_id)
 
     @users.login_required
-    def index(self):
-        user, error = self._user_verifier.check_user(request)
+    def index(self, path):
         app_names = [{'id': app.package_name(),
                       'name': app.name()} for app in self._app_list]
         return render_template(
             'app.html',
-            app_name='Home',
-            app_id='rws_home',
-            app_list=app_names,
-            robot_name=config.ROBOT_NAME,
-            useremail=user.email,
-            username=user.name if user.name is not None else '',
-            server_origin=secrets.SERVER_ORIGIN)
+            route=path,
+            google_client_id=secrets.GOOGLE_CLIENT_ID)
 
-    def oauth2callback(self):
-        return render_template('oauth2callback.html',
-                               BROWSER_API_KEY=secrets.BROWSER_API_KEY)
+    def google_client_id(self):
+        return secrets.GOOGLE_CLIENT_ID
+
+    def signin(self):
+        return render_template('login.html',
+                               client_id=secrets.GOOGLE_CLIENT_ID)
 
     @users.login_required
     def app_controller(self, package_name):
@@ -116,8 +109,7 @@ class RobotWebServer(object):
 
     @users.login_required
     def websocket_url(self):
-        return 'ws://{}:{}'.format(secrets.HOST_NAME,
-                                   self._websocket_server.port())
+        return ''
 
     @users.login_required
     def is_started(self):

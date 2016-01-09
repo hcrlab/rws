@@ -4,13 +4,13 @@
 
 {% block head %}
   {{ super() }}
-  <script type="text/javascript">
+  <!--script type="text/javascript">
     var currentLocation = window.location.pathname;
     var currentUser = '{{ user_identifier }}';
-  </script>
+  </script-->
   <!--script src="/js/user_presence.js"></script-->
 {% endblock %}
 
 {% block body %}
-<rws-app appname="{{app_name}}" appid="{{app_id}}" applist='{{app_list|tojson|safe}}' robotname="{{robot_name}}" serverorigin="{{server_origin}}" useremail="{{useremail}}" username="{{username}}"></rws-app>
+<rws-main route="{{route}}" google-client-id="{{google_client_id}}"></rws-main>
 {% endblock %}

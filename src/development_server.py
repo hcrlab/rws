@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import rospy
 import server_factory
 
 if __name__ == '__main__':
@@ -9,7 +10,6 @@ if __name__ == '__main__':
                         type=bool,
                         default=False,
                         help='Whether to start the server in debug mode.')
-    args = parser.parse_args()
+    args = parser.parse_args(args=rospy.myargv()[1:])
     server = server_factory.development()
-    server._websocket_server.launch()
-    server._app.run(host='0.0.0.0', debug=args.debug)
+    server._app.run(host='0.0.0.0', port=5001, debug=args.debug)
