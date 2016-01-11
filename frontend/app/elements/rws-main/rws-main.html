@@ -147,53 +147,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     </style>
-    <!--google-signin-aware id="googleSignin" client-id="{{googleClientId}}" scopes="profile email" isAuthorized="{{isSignedIn}}"></google-signin-aware-->
-    <template is="dom-if" if="{{!isSignedIn}}" restamp="true">
-      <rws-signin google-client-id="{{googleClientId}}" on-rws-signin="onAsdf"></rws-signin>
+    <template is="dom-if" if="{{!isSignedIn}}">
+      <rws-signin google-client-id="{{googleClientId}}" on-google-signin-success="onSignIn"></rws-signin>
     </template>
+    <template is="dom-if" if="{{isSignedIn}}">
+      <paper-drawer-panel id="paperDrawerPanel">
+        <paper-scroll-header-panel drawer fixed>
+          <paper-toolbar id="drawerToolbar">
+            <span class="paper-font-title">Apps</span>
+          </paper-toolbar>
+          <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}">
+            <a data-route="home" href="{{baseUrl}}">
+              <iron-icon icon="home"></iron-icon>
+              <span>Home</span>
+            </a>
+            <a data-route="settings" href="{{baseUrl}}settings">
+              <iron-icon icon="settings"></iron-icon>
+              <span>Settings</span>
+            </a>
+          </paper-menu>
+        </paper-scroll-header-panel>
 
-    <template is="dom-if" if="{{isSignedIn}}" restamp="true">
-    <paper-drawer-panel id="paperDrawerPanel">
-      <paper-scroll-header-panel drawer fixed>
-        <paper-toolbar id="drawerToolbar">
-          <span class="paper-font-title">Apps</span>
-        </paper-toolbar>
-        <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}">
-          <a data-route="home" href="{{baseUrl}}">
-            <iron-icon icon="home"></iron-icon>
-            <span>Home</span>
-          </a>
-          <a data-route="settings" href="{{baseUrl}}settings">
-            <iron-icon icon="settings"></iron-icon>
-            <span>Settings</span>
-          </a>
-        </paper-menu>
-      </paper-scroll-header-panel>
+        <paper-scroll-header-panel main id="headerPanelMain" fixed>
+          <paper-toolbar id="mainToolbar">
+            <div class="middle middle-container center horizontal layout">
+              <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                <div class="app-name">Robot Web Server</div>
+                <div class="flex"></div>
+                <div class="user">
+                  <google-signin id="signout-button" scopes="profile email" theme="light" on-tap="onSignOut"></google-signin>
+                </div>
+            </div>
+          </paper-toolbar>
 
-      <paper-scroll-header-panel main id="headerPanelMain" fixed>
-        <paper-toolbar id="mainToolbar">
-          <div class="middle middle-container center horizontal layout">
-            <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-              <div class="app-name">Robot Web Server</div>
-              <div class="flex"></div>
-              <div class="user">
-                <google-signin id="signout-button" scopes="profile email" theme="light" on-tap="onAsdf2"></google-signin>
-              </div>
+          <div class="content">
+            <iron-pages attr-for-selected="data-route" selected="{{route}}">
+              <section data-route="home">
+                Home 
+              </section>
+              <section data-route="settings">
+                Settings
+              </section>
+            </iron-pages>
           </div>
-        </paper-toolbar>
-
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-            <section data-route="home">
-              Home 
-            </section>
-            <section data-route="settings">
-              Settings
-            </section>
-          </iron-pages>
-        </div>
-      </paper-scroll-header-panel>
-    </paper-drawer-panel>
+        </paper-scroll-header-panel>
+      </paper-drawer-panel>
     </template>
   </template>
   <script>
@@ -219,13 +217,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         }
       },
-      onAsdf: function() {
-        console.log('signin called!');
+      onSignIn: function(e) {
         this.isSignedIn = true;
+        e.stopPropagation();
       },
-      onAsdf2: function() {
-        console.log('signOut called!');
+      onSignOut: function(e) {
         this.isSignedIn = false;
+        e.stopPropagation();
       }
     });
   })();

@@ -50,17 +50,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.closeDrawer = function() {
     app.$.paperDrawerPanel.closeDrawer();
   };
-
-  //app.onSignedIn = function() {
-  //  console.log('signin aware');
-  //  app.isSignedIn = true;
-  //}
-  //app.onSignedOut = function() {
-  //  console.log('signout aware');
-  //  app.isSignedIn = false;
-  //}
-  //if (app.isSignedIn === undefined) {
-  //  console.log('initializing to false');
-  //  app.isSignedIn = false;
-  //}
 })(document);

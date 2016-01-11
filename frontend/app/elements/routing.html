@@ -10,7 +10,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <script src="../bower_components/page/page.js"></script>
 <script>
-if (document.querySelector('#app')) {
   window.addEventListener('WebComponentsReady', function() {
 
     // We use Page.js for routing. This is a Micro
@@ -23,8 +22,6 @@ if (document.querySelector('#app')) {
     }
 
     function checkLogin(ctx, next) {
-      var profile = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
-      console.log(profile);
       next();
     }
 
@@ -33,15 +30,15 @@ if (document.querySelector('#app')) {
       next();
     });
 
-    page('/', checkLogin, function() {
+    page('/', function() {
       app.route = 'home';
     });
 
-    page(app.baseUrl, checkLogin, function() {
+    page(app.baseUrl, function() {
       app.route = 'home';
     });
 
-    page('/settings', checkLogin, function() {
+    page('/settings', function() {
       app.route = 'settings';
     });
 
@@ -56,7 +53,5 @@ if (document.querySelector('#app')) {
     page({
       hashbang: false
     });
-
   });
-}
 </script>

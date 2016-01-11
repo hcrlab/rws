@@ -41,7 +41,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="signin-box">
         <h2 class="page-title">Robot web server</h2>
         <div class="signin-buttons">
-          <google-signin id="signin-button" client-id="{{googleClientId}}" scopes="profile email" theme="light" width="wide" raised on-tap="onSignIn"></google-signin>
+          <google-signin id="signin" client-id="" scopes="profile email" theme="light" width="wide" raised></google-signin>
         </div>
       </div>
       <div class="flex"></div>
@@ -55,12 +55,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'rws-signin',
 
       properties: {
-        'googleClientId': String,
+        'googleClientId': {
+          type: String,
+          observer: '_googleClientIdChanged',
+        },
       },
 
-      onSignIn: function() {
-        this.fire('rws-signin');
-      }
+      _googleClientIdChanged: function(val) {
+        if (val !== "{{googleClientId}}") {
+          this.$.signin.clientId = val;
+        }
+      },
     });
   })();
   </script>

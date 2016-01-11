@@ -53,9 +53,11 @@ class RobotWebServer(object):
         self._app.add_url_rule('/api/robot/is_started', 'is_started',
                                self.is_started)
         self._app.add_url_rule('/api/web/google_client_id', 'google_client_id', self.google_client_id)
+        self._app.add_url_rule('/', 'index', self.index, defaults={'path': 'home'})
+        self._app.add_url_rule('/<path>', 'index', self.index)
 
     @users.login_required
-    def index(self, path):
+    def index(self, path='home'):
         app_names = [{'id': app.package_name(),
                       'name': app.name()} for app in self._app_list]
         return render_template(

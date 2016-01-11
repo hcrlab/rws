@@ -54,7 +54,6 @@ def login_required(f):
     Assumes that the first argument is an instance (self) that has a
     UserVerifier as self._user_verifier.
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         self = args[0]
