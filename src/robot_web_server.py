@@ -45,6 +45,7 @@ class RobotWebServer(object):
                                      url_prefix='/api/user_presence')
 
         # Set up routes
+        self._app.add_url_rule('/api/users/check_registered', 'check_user', self.check_user)
         self._app.add_url_rule('/api/users/list', 'list_users', self.list_users)
         self._app.add_url_rule('/api/users/update', 'update_user', self.update_user, methods=['POST'])
         self._app.add_url_rule('/api/users/add', 'add_user', self.add_user, methods=['POST'])
@@ -61,6 +62,10 @@ class RobotWebServer(object):
         self._app.add_url_rule('/api/web/google_client_id', 'google_client_id', self.google_client_id)
         self._app.add_url_rule('/', 'index', self.index, defaults={'path': 'home'})
         self._app.add_url_rule('/<path>', 'index', self.index)
+
+    @users.login_required
+    def check_user(self):
+        return jsonify({'success': True})
 
     @users.admin_required
     def add_user(self):

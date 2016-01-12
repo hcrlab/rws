@@ -143,8 +143,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
     </style>
+    <iron-ajax
+      id="checkUserAjax"
+      url="http://localhost:5001/api/users/check_registered"
+      params=''
+      handle-as="json"
+      on-response="onCheckUserResponse"
+      on-error="onCheckUserError"
+    ></iron-ajax>
     <template is="dom-if" if="{{!isSignedIn}}">
-      <rws-signin google-client-id="{{googleClientId}}" on-google-signin-success="onSignIn"></rws-signin>
+      <rws-signin id="rwsSignin" google-client-id="{{googleClientId}}" on-google-signin-success="checkSignIn"></rws-signin>
     </template>
     <template is="dom-if" if="{{isSignedIn}}">
       <paper-drawer-panel id="paperDrawerPanel">
@@ -222,12 +230,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         }
       },
-      onSignIn: function(e) {
-        this.isSignedIn = true;
+      checkSignIn: function() {
         var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
         var gtoken = currentUser.getAuthResponse().id_token;
         this._setGtoken(gtoken);
-        e.stopPropagation();
+
+        this.$.checkUserAjax.params = {'gtoken': this.gtoken};
+        this.$.checkUserAjax.generateRequest();
+      },
+      onCheckUserResponse: function(e) {
+        this.isSignedIn = true;
+      },
+      onCheckUserError: function(e) {
+        var ironRequest = e.detail.request;
+        var relatedXhr = ironRequest.xhr;
+        document.querySelector('#rwsSignin').signOut();
+        this.isSignedIn = false;
+        alert(relatedXhr.response.error);
       },
       onSignOut: function(e) {
         this.isSignedIn = false;
