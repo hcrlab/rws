@@ -8,9 +8,8 @@ import yaml
 
 
 class Pr2Claimer(object):
-    def __init__(self, blueprint, user_verifier):
+    def __init__(self, blueprint):
         self._blueprint = blueprint
-        self._user_verifier = user_verifier
         self._blueprint.add_url_rule('/claim', 'claim_robot', self.claim_robot,
                                      methods=['POST'])
         self._blueprint.add_url_rule('/start', 'start_robot', self.start_robot,

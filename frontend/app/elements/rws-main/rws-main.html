@@ -182,7 +182,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 Home 
               </section>
               <section data-route="settings">
-                <rws-settings></rws-settings>
+                <rws-settings gtoken="{{gtoken}}"></rws-settings>
               </section>
             </iron-pages>
           </div>
@@ -202,6 +202,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: 'Home',
         },
         googleClientId: String,
+        gtoken: {
+          type: String,
+          readOnly: true,
+        },
         baseUrl: {
           type: String,
           value: '/',
@@ -220,10 +224,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       onSignIn: function(e) {
         this.isSignedIn = true;
+        var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
+        var gtoken = currentUser.getAuthResponse().id_token;
+        this._setGtoken(gtoken);
         e.stopPropagation();
       },
       onSignOut: function(e) {
         this.isSignedIn = false;
+        this._setGtoken(null);
         e.stopPropagation();
       },
       _onRouteChanged: function(route) {

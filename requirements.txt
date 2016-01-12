@@ -1,4 +1,5 @@
 Flask
+flask-cors
 mock
 pymongo
 google-api-python-client
