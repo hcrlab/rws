@@ -27,15 +27,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 100%;
       }
 
-      paper-material {
-        border-radius: 2px;
-        height: 100%;
-        padding: 16px 0 16px 0;
-        width: calc(98.66% - 16px);
-        margin: 16px auto;
-        background: white;
-      }
-
       paper-menu iron-icon {
         margin-right: 33px;
         opacity: 0.54;
@@ -142,9 +133,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           /*padding: 48px 62px;*/
         }
 
+        #rwsDrawerPanel {
+          border-right: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
         .user {
           float: right;
         }
+
       }
     </style>
     <template is="dom-if" if="{{!isSignedIn}}">
@@ -152,7 +148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
     <template is="dom-if" if="{{isSignedIn}}">
       <paper-drawer-panel id="paperDrawerPanel">
-        <paper-scroll-header-panel drawer fixed>
+        <paper-scroll-header-panel drawer fixed id="rwsDrawerPanel">
           <paper-toolbar id="drawerToolbar">
             <span class="paper-font-title">Apps</span>
           </paper-toolbar>
@@ -172,7 +168,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <paper-toolbar id="mainToolbar">
             <div class="middle middle-container center horizontal layout">
               <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-                <div class="app-name">Robot Web Server</div>
+                <div class="app-name">{{appName}}</div>
                 <div class="flex"></div>
                 <div class="user">
                   <google-signin id="signout-button" scopes="profile email" theme="light" on-tap="onSignOut"></google-signin>
@@ -186,7 +182,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 Home 
               </section>
               <section data-route="settings">
-                Settings
+                <rws-settings></rws-settings>
               </section>
             </iron-pages>
           </div>
@@ -201,6 +197,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'rws-main',
       properties: {
+        appName: {
+          type: String,
+          value: 'Home',
+        },
         googleClientId: String,
         baseUrl: {
           type: String,
@@ -210,6 +210,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           value: 'home',
           notify: true,
+          observer: '_onRouteChanged',
         },
         isSignedIn: {
           type: Boolean,
@@ -224,6 +225,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       onSignOut: function(e) {
         this.isSignedIn = false;
         e.stopPropagation();
+      },
+      _onRouteChanged: function(route) {
+        if (route === 'home') {
+          this.appName = 'Home';
+        } else if (route === 'settings') {
+          this.appName = 'Settings';
+        }
       }
     });
   })();
