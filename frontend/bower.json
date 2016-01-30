@@ -1,12 +1,22 @@
 {
-  "name": "frontend",
-  "version": "0.0.0",
+  "name": "polymer-starter-kit",
+  "private": true,
   "dependencies": {
-    "core-elements": "Polymer/core-elements#^0.5.1",
-    "paper-elements": "Polymer/paper-elements#^0.5.1",
-    "polymer": "Polymer/polymer#^0.5.1"
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "page": "visionmedia/page.js#~1.6.4",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
+    "gold-elements": "PolymerElements/gold-elements#^1.0.1",
+    "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
+    "polymer": "Polymer/polymer#^1.2.0",
+    "paper-menu": "PolymerElements/paper-menu#4fecb43601",
+    "google-web-components": "GoogleWebComponents/google-web-components#^1.0.1"
   },
   "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^2.0.0"
+    "web-component-tester": "*"
+  },
+  "ignore": [],
+  "resolutions": {
+    "paper-menu": "4fecb43601"
   }
 }

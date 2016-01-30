@@ -1,0 +1,266 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="rws-main">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+      }
+      #drawerToolbar {
+        color: var(--secondary-text-color);
+        background-color: var(--drawer-menu-color);
+        border-bottom: var(--drawer-toolbar-border-color);
+      }
+
+      paper-scroll-header-panel {
+        height: 100%;
+      }
+
+      paper-menu iron-icon {
+        margin-right: 33px;
+        opacity: 0.54;
+      }
+
+      paper-menu .iron-selected {
+        color: var(--default-primary-color);
+      }
+
+      paper-menu a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-decoration: none;
+        color: var(--menu-link-color);
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        min-height: 48px;
+        padding: 0 16px;
+      }
+
+      paper-toolbar .app-name {
+        font-size: 20px;
+        font-weight: 400;
+        /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+
+      #mainToolbar .middle-container  {
+        height: 100%;
+        width: 100%;
+      }
+
+      #mainToolbar:not(.tall) .middle {
+        font-size: 18px;
+        padding-bottom: 0;
+      }
+
+      #mainToolbar .bottom {
+        margin-left: 48px;
+        /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+      #mainToolbar a {
+        color: #fff;
+      }
+
+      /* Height of the scroll area */
+      .content {
+      }
+
+      #toast .toast-hide-button {
+        color: #eeff41;
+        margin: 10px;
+      }
+
+      /* Breakpoints */
+
+      /* Small */
+      @media (max-width: 600px) {
+
+        paper-material {
+          --menu-container-display: none;
+          width: calc(97.33% - 32px);
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        paper-toolbar .app-name {
+          font-size: 16px;
+          font-weight: 400;
+        }
+
+        .user {
+          font-size: 12px;
+        }
+
+        #drawer .paper-toolbar {
+          margin-left: 16px;
+        }
+
+      }
+
+      /* Tablet+ */
+      @media (min-width: 601px) {
+
+        paper-material {
+          width: calc(98% - 46px);
+          margin-bottom: 32px;
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+
+        #drawer.paper-drawer-panel > [drawer] {
+          border-right: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        iron-pages {
+          /*padding: 48px 62px;*/
+        }
+
+        #rwsDrawerPanel {
+          border-right: 1px solid rgba(0, 0, 0, 0.14);
+        }
+
+        .user {
+          float: right;
+        }
+
+      }
+    </style>
+    <iron-ajax
+      id="checkUserAjax"
+      url="http://localhost:5001/api/users/check_registered"
+      params=''
+      handle-as="json"
+      on-response="onCheckUserResponse"
+      on-error="onCheckUserError"
+    ></iron-ajax>
+    <template is="dom-if" if="{{!isSignedIn}}">
+      <rws-signin id="rwsSignin" google-client-id="{{googleClientId}}" on-google-signin-success="checkSignIn"></rws-signin>
+    </template>
+    <template is="dom-if" if="{{isSignedIn}}">
+      <paper-drawer-panel id="paperDrawerPanel">
+        <paper-scroll-header-panel drawer fixed id="rwsDrawerPanel">
+          <paper-toolbar id="drawerToolbar">
+            <span class="paper-font-title">Apps</span>
+          </paper-toolbar>
+          <paper-menu class="list" attr-for-selected="data-route" selected="{{route}}">
+            <a data-route="home" href="{{baseUrl}}">
+              <iron-icon icon="home"></iron-icon>
+              <span>Home</span>
+            </a>
+            <a data-route="settings" href="{{baseUrl}}settings">
+              <iron-icon icon="settings"></iron-icon>
+              <span>Settings</span>
+            </a>
+          </paper-menu>
+        </paper-scroll-header-panel>
+
+        <paper-scroll-header-panel main id="headerPanelMain" fixed>
+          <paper-toolbar id="mainToolbar">
+            <div class="middle middle-container center horizontal layout">
+              <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                <div class="app-name">{{appName}}</div>
+                <div class="flex"></div>
+                <div class="user">
+                  <google-signin id="signout-button" scopes="profile email" theme="light" on-tap="onSignOut"></google-signin>
+                </div>
+            </div>
+          </paper-toolbar>
+
+          <div class="content">
+            <iron-pages attr-for-selected="data-route" selected="{{route}}">
+              <section data-route="home">
+                Home 
+              </section>
+              <section data-route="settings">
+                <rws-settings gtoken="{{gtoken}}"></rws-settings>
+              </section>
+            </iron-pages>
+          </div>
+        </paper-scroll-header-panel>
+      </paper-drawer-panel>
+    </template>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'rws-main',
+      properties: {
+        appName: {
+          type: String,
+          value: 'Home',
+        },
+        googleClientId: String,
+        gtoken: {
+          type: String,
+          readOnly: true,
+        },
+        baseUrl: {
+          type: String,
+          value: '/',
+        },
+        route: {
+          type: String,
+          value: 'home',
+          notify: true,
+          observer: '_onRouteChanged',
+        },
+        isSignedIn: {
+          type: Boolean,
+          value: false,
+          notify: true
+        }
+      },
+      checkSignIn: function() {
+        var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
+        var gtoken = currentUser.getAuthResponse().id_token;
+        this._setGtoken(gtoken);
+
+        this.$.checkUserAjax.params = {'gtoken': this.gtoken};
+        this.$.checkUserAjax.generateRequest();
+      },
+      onCheckUserResponse: function(e) {
+        this.isSignedIn = true;
+      },
+      onCheckUserError: function(e) {
+        var ironRequest = e.detail.request;
+        var relatedXhr = ironRequest.xhr;
+        document.querySelector('#rwsSignin').signOut();
+        this.isSignedIn = false;
+        alert(relatedXhr.response.error);
+      },
+      onSignOut: function(e) {
+        this.isSignedIn = false;
+        this._setGtoken(null);
+        e.stopPropagation();
+      },
+      _onRouteChanged: function(route) {
+        if (route === 'home') {
+          this.appName = 'Home';
+        } else if (route === 'settings') {
+          this.appName = 'Settings';
+        }
+      }
+    });
+  })();
+  </script>
+</dom-module>

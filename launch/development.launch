@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+    <arg name="port" value="9999" />
+  </include>
+  <arg name="debug" default="False" />
+  <node pkg="rws" name="robot_web_server" type="development_server.py" args="--debug $(arg debug)" required="true" />
+</launch>

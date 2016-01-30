@@ -1,0 +1,238 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="rws-settings">
+  <template>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+        margin: 0px 16px;
+      }
+      table.users {
+        border-collapse: collapse; 
+        width: 100%;
+        padding: 5px;
+      }
+      .users th {
+        text-align: left;
+      }
+      .users th, td {
+        padding: 5px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+      }
+      .users paper-button {
+        color: var(--dark-primary-color);
+      }
+      .userrow:hover {
+        background-color: #eee; 
+      }
+      .rolebox {
+        text-align: center;
+      }
+      .addbox {
+        width: 100%;
+      }
+      .adduserbutton {
+        color: var(--text-primary-color);
+        background-color: var(--default-primary-color);
+      }
+      paper-button.adduserbutton[disabled] {
+        color: var(--disabled-text-color);
+        background-color: #eaeaea;
+      }
+      paper-button.deleteuserbutton[disabled] {
+        color: var(--disabled-text-color);
+        background-color: #eaeaea;
+      }
+    </style>
+    <iron-ajax
+      id="userListAjax"
+      url="http://localhost:5001/api/users/list"
+      params=''
+      handle-as="json"
+      on-response="onUserList"
+    ></iron-ajax>
+    <iron-ajax
+      id="updateUserAjax"
+      url="http://localhost:5001/api/users/update"
+      content-type='application/json'
+      method='POST'
+    ></iron-ajax>
+    <iron-ajax
+      id="addUserAjax"
+      url="http://localhost:5001/api/users/add"
+      content-type='application/json'
+      method='POST'
+      on-response='onAddUserResponse'
+      on-error='onAddUserError'
+    ></iron-ajax>
+    <iron-ajax
+      id="removeUserAjax"
+      url="http://localhost:5001/api/users/remove"
+      content-type='application/json'
+      method='POST'
+      on-response='onRemoveUserResponse'
+      on-error='onRemoveUserError'
+    ></iron-ajax>
+
+
+    <paper-material raised>
+    <h2>Users</h2>
+      <p>
+        Users can run apps on the robot.
+        Administrators can additionally add users, remove users, or make a user an administrator.
+      </p>
+      <table class="addbox">
+        <tr>
+          <td><gold-email-input id="addemail" auto-validate invalid="{{emailInvalid}}" label="Add a user by email address"></gold-email-input></td>
+          <td><paper-checkbox id="addadmin">Is Admin</paper-checkbox>
+          <td><paper-button class="adduserbutton" disabled="{{emailInvalid}}" on-tap="onAddUser">Add</paper-button></td>
+        </tr>
+      </table>
+      <table class="users">
+        <tr><th>Name</th><th>Email</th><th>Is Administrator</th><th>Actions</th></tr>
+        <template is="dom-repeat" items="{{users}}">
+          <tr class="userrow">
+            <td>{{item.name}}</td>
+            <td>{{item.email}}</td>
+            <td class="rolebox">
+              <paper-checkbox checked="{{item.isAdmin}}" disabled="{{item.disabled}}" data-user-id$="{{item.mongoId}}" on-change="onChangeRole"></paper-checkbox>
+            </td>
+            <td><paper-button data-user-id$="{{item.mongoId}}" class="deleteuserbutton" disabled="{{item.disabled}}" on-tap="onDeleteUser">Delete</paper-button></td>
+          </tr>
+        </template>
+      </table>
+    </paper-material>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'rws-settings',
+
+      properties: {
+        users: {
+          type: Array,
+          value: [],
+          notify: true,
+          observer: '_onUsersChanged',
+        },
+        gtoken: {
+          type: String,
+        },
+        emailInvalid: {
+          type: Boolean,
+          notify: true,
+        },
+      },
+
+      ready: function() {
+        this.$.userListAjax.params = {'gtoken': this.gtoken};
+        this.$.userListAjax.generateRequest();
+      },
+
+      onUserList: function(e) {
+        this.users = e.detail.response.data;
+      },
+
+      _onUsersChanged: function() {
+        var adminCount = 0;
+        for (var user of this.users) {
+          if (user.isAdmin) {
+            adminCount += 1;
+          }
+        }
+        if (adminCount == 1) {
+          for (var user of this.users) {
+            if (user.isAdmin) {
+              user.disabled = true;
+            }
+          }
+        } else {
+          for (var user of this.users) {
+            user.disabled = false;
+          }
+        }
+      },
+
+      onDeleteUser: function(e) {
+        var body = {
+          'gtoken': this.gtoken,
+          'userId': e.target.dataset.userId,
+        };
+        this.$.removeUserAjax.body = body;
+        this.$.removeUserAjax.generateRequest();
+      },
+
+      onRemoveUserError: function(e) {
+        var ironRequest = e.detail.request;
+        var relatedXhr = ironRequest.xhr;
+        alert(relatedXhr.response.error);
+      },
+
+      onRemoveUserResponse: function(e) {
+        // Refresh user list.
+        this.$.userListAjax.params = {'gtoken': this.gtoken};
+        this.$.userListAjax.generateRequest();
+      },
+
+      onChangeRole: function(e) {
+        var body = {
+          'gtoken': this.gtoken,
+          'userId': e.target.dataset.userId,
+          'update': {
+            'isAdmin': e.target.checked
+          }
+        };
+        this.$.updateUserAjax.body = body;
+        this.$.updateUserAjax.generateRequest();
+      },
+
+      onUpdateUserResponse: function(e) {
+      },
+
+      onAddUser: function(e) {
+        var body = {
+          'gtoken': this.gtoken,
+          'email': this.$.addemail.value,
+          'isAdmin': this.$.addadmin.checked
+        };
+        this.$.addUserAjax.body = body;
+        this.$.addUserAjax.generateRequest();
+      },
+
+      onAddUserResponse: function(e) {
+        // Clear form.
+        this.$.addemail.value = '';
+        this.$.addadmin.checked = false;
+
+        // Refresh user list.
+        this.$.userListAjax.params = {'gtoken': this.gtoken};
+        this.$.userListAjax.generateRequest();
+      },
+
+      onAddUserError: function(e) {
+        // Clear form.
+        this.$.addemail.value = '';
+        this.$.addadmin.checked = false;
+
+        var ironRequest = e.detail.request;
+        var relatedXhr = ironRequest.xhr;
+        alert(relatedXhr.response.error);
+      }
+    });
+  })();
+  </script>
+</dom-module>

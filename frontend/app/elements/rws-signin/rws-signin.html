@@ -1,0 +1,76 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="rws-signin">
+  <template>
+    <style>
+      :host {
+        display: block;
+        height: 100%;
+        width: 100%;
+        background-color: var(--dark-primary-color);
+      }
+      .container {
+        height: 100%;
+      }
+      .signin-box {
+        margin: 0px auto;
+        background-color: var(--dark-primary-color);
+        color: #fff;
+        padding: 16px;
+      }
+      .signin-box .page-title {
+        margin-top: 0;
+      }
+      .signin-buttons {
+        text-align: center;
+          width: 100%;
+      }
+    </style>
+    <div class="container layout vertical">
+      <div class="flex"></div>
+      <div class="signin-box">
+        <h2 class="page-title">Robot web server</h2>
+        <div class="signin-buttons">
+          <google-signin id="signin" client-id="" scopes="profile email" theme="light" width="wide" raised></google-signin>
+        </div>
+      </div>
+      <div class="flex"></div>
+    </div>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'rws-signin',
+
+      properties: {
+        'googleClientId': {
+          type: String,
+          observer: '_googleClientIdChanged',
+        },
+      },
+
+      _googleClientIdChanged: function(val) {
+        if (val !== "{{googleClientId}}") {
+          this.$.signin.clientId = val;
+        }
+      },
+
+      signOut: function() {
+        this.$.signin.signOut();
+      },
+    });
+  })();
+  </script>
+</dom-module>
