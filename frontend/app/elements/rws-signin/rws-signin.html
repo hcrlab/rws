@@ -36,12 +36,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           width: 100%;
       }
     </style>
+    <iron-ajax
+      id="checkUserAjax"
+      url="http://localhost:5001/api/users/check_registered"
+      params=''
+      handle-as="json"
+      on-response="_onCheckUserResponse"
+      on-error="_onCheckUserError"
+    ></iron-ajax>
     <div class="container layout vertical">
       <div class="flex"></div>
       <div class="signin-box">
         <h2 class="page-title">Robot web server</h2>
         <div class="signin-buttons">
-          <google-signin id="signin" client-id="" scopes="profile email" theme="light" width="wide" raised></google-signin>
+          <google-signin id="signin"
+            client-id="" scopes="profile email"
+            theme="light" width="wide" raised
+            on-google-signin-success="_onGoogleSigninSuccess"
+          ></google-signin>
         </div>
       </div>
       <div class="flex"></div>
@@ -61,14 +73,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
       },
 
+      signOut: function() {
+        this.$.signin.signOut();
+      },
+
       _googleClientIdChanged: function(val) {
         if (val !== "{{googleClientId}}") {
           this.$.signin.clientId = val;
         }
       },
 
-      signOut: function() {
+      _onGoogleSigninSuccess: function() {
+        var currentUser = gapi.auth2.getAuthInstance().currentUser.get();
+        var gtoken = currentUser.getAuthResponse().id_token;
+        this.gtoken = gtoken;
+
+        this.$.checkUserAjax.params = {'gtoken': this.gtoken};
+        this.$.checkUserAjax.generateRequest();
+      },
+
+      _onCheckUserResponse: function(e) {
+        var detail = {
+          'gtoken': this.gtoken,
+          'status': e.detail.response.status
+        };
+        this.fire('rws-signin-success', detail);
+      },
+
+      _onCheckUserError: function(e) {
         this.$.signin.signOut();
+        alert(e.detail.response.error);
       },
     });
   })();

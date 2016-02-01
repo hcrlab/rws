@@ -1,0 +1,198 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="rws-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-scroll-header-panel {
+        height: 100%;
+      }
+
+      paper-menu iron-icon {
+        margin-right: 33px;
+        opacity: 0.54;
+      }
+
+      paper-menu .iron-selected {
+        color: var(--default-primary-color);
+      }
+
+      paper-menu a {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        text-decoration: none;
+        color: var(--menu-link-color);
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        min-height: 48px;
+        padding: 0 16px;
+      }
+
+      #paperToggle {
+        color: var(--text-primary-color);
+      }
+
+      paper-toolbar {
+        background-color: var(--dark-primary-color);
+      }
+
+      paper-toolbar .app-name {
+        color: var(--text-primary-color);
+        font-size: 20px;
+        font-weight: 400;
+        /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+
+      #mainToolbar .middle-container  {
+        height: 100%;
+        width: 100%;
+      }
+      #mainToolbar:not(.tall) .middle {
+        font-size: 18px;
+        padding-bottom: 0;
+      }
+      #mainToolbar .bottom {
+        margin-left: 48px;
+        /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+        -webkit-transform-origin: left center;
+        transform-origin: left center;
+      }
+      #mainToolbar a {
+        color: #fff;
+      }
+
+      #toast .toast-hide-button {
+        color: #eeff41;
+        margin: 10px;
+      }
+
+      /* Breakpoints */
+      /* Small */
+      @media (max-width: 600px) {
+        paper-material {
+          --menu-container-display: none;
+          width: calc(97.33% - 32px);
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+        paper-toolbar .app-name {
+          font-size: 16px;
+          font-weight: 400;
+        }
+        .user {
+          font-size: 12px;
+        }
+        #drawer .paper-toolbar {
+          margin-left: 16px;
+        }
+      }
+
+      /* Tablet+ */
+      @media (min-width: 601px) {
+        paper-material {
+          width: calc(98% - 46px);
+          margin-bottom: 32px;
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+        #drawer.paper-drawer-panel > [drawer] {
+          border-right: var(--drawer-border-color);
+        }
+        #rwsDrawerPanel {
+          border-right: var(--drawer-border-color);
+        }
+        .user {
+          float: right;
+        }
+      }
+    </style>
+    <paper-drawer-panel id="paperDrawerPanel" responsive-width="1024px" drawer-width="200px">
+      <paper-scroll-header-panel drawer fixed id="rwsDrawerPanel">
+        <!--paper-toolbar id="drawerToolbar">
+        </paper-toolbar-->
+        <paper-menu class="list" attr-for-selected="data-route" selected="{{appRoute}}">
+          <a data-route="home" href="{{baseUrl}}">
+            <iron-icon icon="home"></iron-icon>
+            <span>Home</span>
+          </a>
+          <a data-route="settings" href="{{baseUrl}}settings">
+            <iron-icon icon="settings"></iron-icon>
+            <span>Settings</span>
+          </a>
+        </paper-menu>
+      </paper-scroll-header-panel>
+
+      <paper-scroll-header-panel main id="headerPanelMain" fixed>
+        <paper-toolbar id="mainToolbar">
+          <div class="middle middle-container center horizontal layout">
+            <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+              <div class="app-name">{{appName}}</div>
+              <div class="flex"></div>
+              <div class="user">
+                <google-signin id="signout-button" scopes="profile email" theme="light"></google-signin>
+              </div>
+          </div>
+        </paper-toolbar>
+
+        <div class="content">
+          <iron-pages attr-for-selected="data-route" selected="{{appRoute}}">
+            <section data-route="home">
+              Home 
+            </section>
+            <section data-route="settings">
+              <rws-settings gtoken="{{gtoken}}"></rws-settings>
+            </section>
+          </iron-pages>
+        </div>
+      </paper-scroll-header-panel>
+    </paper-drawer-panel>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'rws-app',
+
+      properties: {
+        appName: {
+          type: String,
+          value: 'Robot web server',
+        },
+        appRoute: {
+          type: String,
+          value: 'home',
+          notify: true,
+        },
+        baseUrl: {
+          type: String,
+        },
+        route: {
+          type: String,
+          notify: true
+        },
+        gtoken: String
+      },
+    });
+  })();
+  </script>
+</dom-module>

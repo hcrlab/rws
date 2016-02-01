@@ -31,7 +31,6 @@ def login_required(f):
     Assumes that the first argument is an instance (self) that has a
     UserManager as self._user_manager.
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         self = args[0]
@@ -167,11 +166,18 @@ class UserManager(object):
 
         if 'email' not in idinfo:
             return None, 'The sign-in was invalid.'
-        user = self.get_user(idinfo['email'])
-        if user is None:
-            return None, 'User is not registered to use the robot.'
-        user.update_with_id_info(idinfo)
-        self.update_user(user.mongo_id, user)
+
+        if self.user_count() == 0:
+            user = User.from_id_info(idinfo)
+            user.is_admin = True
+            self.add_user(user) 
+            return user, None
+        else:
+            user = self.get_user(idinfo['email'])
+            if user is None:
+                return None, 'User is not registered to use the robot.'
+            user.update_with_id_info(idinfo)
+            self.update_user(user.mongo_id, user)
 
         return user, None
 
@@ -239,3 +245,6 @@ class UserManager(object):
         if result.deleted_count == 0:
             return 'User does not exist.'
         return None
+
+    def user_count(self):
+        return self._db.users.count()

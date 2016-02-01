@@ -10,34 +10,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <html>
-
 <head>
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <title>Elements Test Runner</title>
-  <meta charset="UTF-8">
+  <title>rws-app</title>
 
-  <script src="../../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
-  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../bower_components/web-component-tester/browser.js"></script>
+
+  <!-- Step 1: import the element to test -->
+  <link rel="import" href="../elements/rws-app/rws-app.html">
+
 </head>
-
 <body>
 
-  <script>
-    WCT.loadSuites([
-      'my-greeting-basic.html',
-      'my-list-basic.html',
-      'rws-main-basic.html',
-      'rws-signin-basic.html',
-      'rws-index-basic.html',
-      'rws-settings-basic.html',
-      'rws-app-basic.html',
-      'rws-app-basic.html?dom=shadow',
-      'rws-setup-basic.html',
-      'rws-setup-basic.html?dom=shadow'
-    ]);
-  </script>
+<test-fixture id="basic">
+  <template>
+    <rws-app></rws-app>
+  </template>
+</test-fixture>
 
+<script>
+  suite('rws-app tests', function() {
+    var element;
+
+    setup(function() {
+      element = fixture('basic');
+    });
+
+    test('', function() {
+
+    });
+
+  });
+</script>
 
 </body>
-
 </html>

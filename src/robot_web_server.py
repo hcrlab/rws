@@ -63,9 +63,16 @@ class RobotWebServer(object):
         self._app.add_url_rule('/', 'index', self.index, defaults={'path': 'home'})
         self._app.add_url_rule('/<path>', 'index', self.index)
 
-    @users.login_required
     def check_user(self):
-        return jsonify({'success': True})
+        user_count_before = self._user_manager.user_count()
+        user, error = self._user_manager.check_user(request)
+        if error is not None:
+            response = jsonify({'status': 'error', 'error': error})
+            response.status_code = 401
+            return response
+        if user_count_before == 0:
+            return jsonify({'status': 'setup'})
+        return jsonify({'status': 'success'})
 
     @users.admin_required
     def add_user(self):

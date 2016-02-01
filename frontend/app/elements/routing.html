@@ -22,27 +22,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     function checkLogin(ctx, next) {
-      if (app.isSignedIn) {
-        app.checkSignIn();
+      if (!app.isSignedIn) {
+        page.redirect('/signin');
+      } else {
+        next();
       }
-      next();
     }
 
     // Routes
-    page('*', checkLogin, function(ctx, next) {
+    page('*', function(ctx, next) {
       next();
     });
 
-    page('/', function() {
-      app.route = 'home';
+    page('/', checkLogin, function() {
+      app.appRoute = 'home';
     });
 
-    page(app.baseUrl, function() {
-      app.route = 'home';
+    page(app.baseUrl, checkLogin, function() {
+      app.appRoute = 'home';
     });
 
-    page('/settings', function() {
-      app.route = 'settings';
+    page('/signin', function() {
+      //app.route = 'signin';
+    });
+
+    page('/settings', checkLogin, function() {
+      app.appRoute = 'settings';
     });
 
     // 404
