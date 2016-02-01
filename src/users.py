@@ -152,7 +152,7 @@ class UserManager(object):
         token = None
         if 'gtoken' in request.args:
             token = request.args['gtoken']
-        elif 'gtoken' in request.get_json():
+        elif request.get_json() is not None and 'gtoken' in request.get_json():
             token = request.get_json()['gtoken']
         if token is None:
             return None, 'User is not signed in.'

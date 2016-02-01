@@ -125,6 +125,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     </style>
+    <iron-ajax
+      auto
+      id="listAppsAjax"
+      url="http://localhost:5001/api/apps/list"
+      params='{{listAppsOptions}}'
+      handle-as="json"
+      last-response="{{appList}}"
+    ></iron-ajax>
     <paper-drawer-panel id="paperDrawerPanel" responsive-width="1024px" drawer-width="200px">
       <paper-scroll-header-panel drawer fixed id="rwsDrawerPanel">
         <!--paper-toolbar id="drawerToolbar">
@@ -138,6 +146,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <iron-icon icon="settings"></iron-icon>
             <span>Settings</span>
           </a>
+          <template is="dom-repeat" items="[[appList.data]]">
+            <a data-route="app/[[item.package_name]]" href="{{baseUrl}}app/[[item.package_name]]">
+              <iron-icon icon="work"></iron-icon>
+              <span>[[item.app_name]]</span>
+            </a>
+          </template>
         </paper-menu>
       </paper-scroll-header-panel>
 
@@ -161,6 +175,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="settings">
               <rws-settings gtoken="{{gtoken}}"></rws-settings>
             </section>
+            <section data-route="app">
+              <iron-ajax id="startApp"
+                url="{{backend}}/api/app/{{packageName}}/start"
+                params='{{startAppParams}}' 
+                method='POST'
+                handle-as="json"
+              ></iron-ajax>
+              <iframe seamless src="{{backend}}/app/{{packageName}}/index.html" width="100%" height="100%" style="border: none"></iframe>
+            </section>
           </iron-pages>
         </div>
       </paper-scroll-header-panel>
@@ -183,6 +206,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           value: 'home',
           notify: true,
         },
+        backend: {
+          type: String,
+        },
         baseUrl: {
           type: String,
         },
@@ -190,8 +216,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           notify: true
         },
-        gtoken: String
+        gtoken: String,
+        listAppsOptions: {
+          type: String,
+          computed: '_computeListAppsOptions(gtoken)',
+        },
+        packageName: {
+          type: String,
+          notify: true,
+          observer: '_onPackageNameChanged',
+        },
+        startAppParams: {
+          type: String,
+          computed: '_computeStartAppParams(gtoken)',
+        },
       },
+
+      _computeListAppsOptions: function(gtoken) {
+        return {'gtoken': gtoken};
+      },
+
+      _computeStartAppParams: function(gtoken) {
+        return {'gtoken': gtoken};
+      },
+
+      _onPackageNameChanged: function() {
+        this.$.startApp.generateRequest();
+      }
     });
   })();
   </script>

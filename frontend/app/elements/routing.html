@@ -50,6 +50,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.appRoute = 'settings';
     });
 
+    page('/app/:package_name', checkLogin, function(data) {
+      app.appRoute = 'app';
+      app.packageName = data.params.package_name;
+    });
+
     // 404
     page('*', function() {
       app.$.toast.text = 'Can\'t find: ' + window.location.href  + '. Redirected you to Home Page';

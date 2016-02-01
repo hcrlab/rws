@@ -33,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       on-error="onCheckUserError"
     ></iron-ajax>
     <template is="dom-if" if="{{isSignedIn}}">
-      <rws-app app-route="{{appRoute}}" base-url="{{baseUrl}}" user="{{user}}" gtoken="{{gtoken}}" on-google-signed-out="_onGoogleSignedOut"></rws-app>
+    <rws-app app-route="{{appRoute}}" backend="{{backend}}" base-url="{{baseUrl}}" package-name="{{packageName}}" user="{{user}}" gtoken="{{gtoken}}" on-google-signed-out="_onGoogleSignedOut"></rws-app>
       </section>
     </template>
     <template is="dom-if" if="{{!isSignedIn}}">
@@ -60,11 +60,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         gtoken: {
           type: String,
         },
-        route: {
-          type: String,
-          value: 'home',
-          notify: true,
-        },
         user: {
           type: Object,
           notify: true
@@ -72,7 +67,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         isSignedIn: {
           type: Boolean,
           value: false,
-        }
+        },
+        backend: {
+          type: String,
+        },
       },
       _onRwsSigninSuccess: function(e) {
         this.user = gapi.auth2.getAuthInstance().currentUser.get();

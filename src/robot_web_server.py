@@ -50,18 +50,15 @@ class RobotWebServer(object):
         self._app.add_url_rule('/api/users/update', 'update_user', self.update_user, methods=['POST'])
         self._app.add_url_rule('/api/users/add', 'add_user', self.add_user, methods=['POST'])
         self._app.add_url_rule('/api/users/remove', 'remove_user', self.remove_user, methods=['POST'])
-        self._app.add_url_rule('/signin', 'signin', self.signin)
-        self._app.add_url_rule('/app/<package_name>', 'app_controller',
-                               self.app_controller)
-        self._app.add_url_rule('/app/close/<package_name>', 'app_close',
-                               self.app_close)
+        self._app.add_url_rule('/api/apps/list', 'list_apps', self.list_apps)
+        self._app.add_url_rule('/api/app/<package_name>/start', 'start_app', self.start_app, methods=['POST'])
+        self._app.add_url_rule('/api/app/<package_name>/close', 'close_app', self.close_app, methods=['POST'])
         self._app.add_url_rule('/get_websocket_url', 'websocket_url',
                                self.websocket_url)
         self._app.add_url_rule('/api/robot/is_started', 'is_started',
                                self.is_started)
         self._app.add_url_rule('/api/web/google_client_id', 'google_client_id', self.google_client_id)
         self._app.add_url_rule('/', 'index', self.index, defaults={'path': 'home'})
-        self._app.add_url_rule('/<path>', 'index', self.index)
 
     def check_user(self):
         user_count_before = self._user_manager.user_count()
@@ -154,46 +151,42 @@ class RobotWebServer(object):
     def google_client_id(self):
         return secrets.GOOGLE_CLIENT_ID
 
-    def signin(self):
-        return render_template('login.html',
-                               client_id=secrets.GOOGLE_CLIENT_ID)
+    @users.login_required
+    def list_apps(self):
+        data = []
+        for package_name, app in self._rws_apps.items():
+            data.append({
+                'package_name': package_name,
+                'app_name': app.name()
+            })
+        def sort_by_name_key(app):
+            return app['app_name']
+        data.sort(key=sort_by_name_key)
+        return jsonify({'data': data})
 
     @users.login_required
-    def app_controller(self, package_name):
+    def start_app(self, package_name):
         if package_name in self._rws_apps:
             rws_app = self._rws_apps[package_name]
             rws_app.launch()
-
-            # For user presence
-            #user, error = self._user_verifier.check_user(request)
-            # TODO(csu): also add users to user presence set here
-            app_names = [{'id': app.package_name(),
-                          'name': app.name()} for app in self._app_list]
-
-            return render_template(
-                'app.html',
-                app_name=rws_app.name(),
-                app_id=package_name,
-                app_list=app_names,
-                robot_name=config.ROBOT_NAME,
-                #useremail=user.email,
-                #username=user.name if user.name is not None else '',
-                server_origin=secrets.SERVER_ORIGIN)
+            return jsonify({'status': 'success'})
         else:
-            abort(404, 'No app named {}'.format(package_name))
+            response = jsonify({'status': 'error', 'error': 'No app named {}'.format(package_name)})
+            response.status_code = 401
+            return response
 
     @users.login_required
-    def app_close(self, package_name):
+    def close_app(self, package_name):
         if package_name in self._rws_apps:
             rws_app = self._rws_apps[package_name]
             if rws_app.is_running():
                 rws_app.terminate()
 
-            # TODO(csu): also remove users from user presence set here
-
-            return redirect(url_for('index'))
+            return jsonify({'status': 'success'})
         else:
-            abort(404, 'No app named {}'.format(package_name))
+            response = jsonify({'status': 'error', 'error': 'No app named {}'.format(package_name)})
+            response.status_code = 401
+            return response
 
     @users.login_required
     def websocket_url(self):
