@@ -33,8 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       on-error="onCheckUserError"
     ></iron-ajax>
     <template is="dom-if" if="{{isSignedIn}}">
-    <rws-app app-route="{{appRoute}}" backend="{{backend}}" base-url="{{baseUrl}}" package-name="{{packageName}}" user="{{user}}" gtoken="{{gtoken}}" on-google-signed-out="_onGoogleSignedOut"></rws-app>
-      </section>
+      <rws-app app-route="{{appRoute}}" backend="{{backend}}" base-url="{{baseUrl}}" package-name="{{packageName}}" user="{{user}}" gtoken="{{gtoken}}" on-google-signed-out="_onGoogleSignedOut"></rws-app>
     </template>
     <template is="dom-if" if="{{!isSignedIn}}">
       <rws-signin id="rwsSignin"
