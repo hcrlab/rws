@@ -34,6 +34,10 @@ class AppManager(object):
             return app_list
         else:
             return []
+    
+    def close_all(self, apps):
+        for app in apps:
+            app.terminate()
 
 
 class App(object):

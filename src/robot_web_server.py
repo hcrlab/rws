@@ -5,6 +5,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from user_presence import blueprint as user_presence_blueprint
+import atexit
 import config
 import os
 import rosnode
@@ -57,6 +58,7 @@ class RobotWebServer(object):
                                self.websocket_url)
         self._app.add_url_rule('/api/robot/is_started', 'is_started',
                                self.is_started)
+        atexit.register(self._app_manager.close_all, self._app_list)
 
     @users.login_required
     def index(self):
