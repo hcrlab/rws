@@ -78,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         if (e.detail.status === 'setup') {
           page.redirect('/settings');
         } else {
-          page.redirect(this.baseUrl);
+          page.redirect(e.detail.redirect || this.baseUrl);
         }
       },
 

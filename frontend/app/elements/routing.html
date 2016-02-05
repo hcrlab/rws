@@ -24,6 +24,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     function checkLogin(ctx, next) {
       if (!app.isSignedIn) {
         page.redirect('/signin');
+        app.$$('#rwsSignin').redirect = ctx.path;
       } else {
         next();
       }

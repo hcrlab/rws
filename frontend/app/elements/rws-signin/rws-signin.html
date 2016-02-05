@@ -71,6 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           observer: '_googleClientIdChanged',
         },
+        'redirect': String,
       },
 
       signOut: function() {
@@ -93,9 +94,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _onCheckUserResponse: function(e) {
+        var redirect = this.redirect;
+        this.redirect = '';
         var detail = {
           'gtoken': this.gtoken,
-          'status': e.detail.response.status
+          'status': e.detail.response.status,
+          'redirect': redirect,
         };
         this.fire('rws-signin-success', detail);
       },
