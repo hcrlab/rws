@@ -44,10 +44,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   // Scroll page to top and expand header
   app.scrollPageToTop = function() {
-    app.$$('rws-app').scrollToTop(true);
+    var rwsApp = app.$$('rws-app');
+    if (rwsApp) {
+      rwsApp.scrollToTop(true);
+    }
   };
 
   app.closeDrawer = function() {
-    app.$$('rws-app').closeDrawer();
+    var rwsApp = app.$$('rws-app');
+    if (rwsApp) {
+      rwsApp.closeDrawer();
+    }
   };
 })(document);
