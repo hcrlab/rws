@@ -15,6 +15,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
+        height: 100%;
+      }
+      .content {
+        height: 100%;
+      }
+      .content iron-pages {
+        height: 100%;
+      }
+      .content section {
+        height: 100%;
       }
 
       paper-scroll-header-panel {
@@ -129,10 +139,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       auto
       id="listAppsAjax"
       url="http://localhost:5001/api/apps/list"
-      params='{{listAppsOptions}}'
+      params="{{authOptions}}"
       handle-as="json"
       last-response="{{appList}}"
     ></iron-ajax>
+    <iron-ajax
+      auto
+      id="isBroughtUpAjax"
+      url="{{backend}}/api/robot/bringup"
+      params="{{authOptions}}"
+      handle-as="json"
+      method="POST"
+      last-response="{{isBroughtUp}}"
+    ></iron-ajax>
+    <paper-dialog id="bringUp" modal="true" opened="{{isBroughtUp.isBroughtUp}}">
+      <h2>The robot is starting up</h2>
+      <p>
+        This process normally takes around 30 seconds or so.
+        Some apps may not function properly until then.
+        If an app isn't working, try waiting a bit and reloading the page.
+      </p>
+      <div class="buttons">
+        <paper-button dialog-confirm>Got it</paper-button>
+      </div>
+    </paper-dialog>
+
     <paper-drawer-panel id="paperDrawerPanel" responsive-width="1024px" drawer-width="200px">
       <paper-scroll-header-panel drawer fixed id="rwsDrawerPanel">
         <!--paper-toolbar id="drawerToolbar">
@@ -178,8 +209,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <section data-route="app">
               <iron-ajax id="startApp"
                 url="{{backend}}/api/app/{{packageName}}/start"
-                params='{{startAppParams}}' 
-                method='POST'
+                params="{{authOptions}}" 
+                method="POST"
                 handle-as="json"
               ></iron-ajax>
               <iframe seamless src="{{backend}}/app/{{packageName}}/index.html" width="100%" height="100%" style="border: none"></iframe>
@@ -217,26 +248,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         },
         gtoken: String,
-        listAppsOptions: {
+        authOptions: {
           type: String,
-          computed: '_computeListAppsOptions(gtoken)',
+          computed: '_computeAuthOptions(gtoken)',
         },
         packageName: {
           type: String,
           notify: true,
           observer: '_onPackageNameChanged',
         },
-        startAppParams: {
-          type: String,
-          computed: '_computeStartAppParams(gtoken)',
-        },
       },
 
-      _computeListAppsOptions: function(gtoken) {
-        return {'gtoken': gtoken};
-      },
-
-      _computeStartAppParams: function(gtoken) {
+      _computeAuthOptions: function(gtoken) {
         return {'gtoken': gtoken};
       },
 

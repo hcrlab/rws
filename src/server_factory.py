@@ -5,7 +5,7 @@ from flask.ext.cors import CORS
 from pymongo import MongoClient
 from robot_web_server import RobotWebServer
 from websocket import WebsocketServer
-from robot_start_stop import Pr2Claimer
+from robot_start_stop import Robot
 from users import UserManager
 import apps
 import users
@@ -21,9 +21,9 @@ def production():
     client = MongoClient()
     db = client.rws_dev
     user_manager = UserManager(db)
-    start_stop_blueprint = Blueprint('robot_start_stop', __name__)
-    pr2_claimer = Pr2Claimer(start_stop_blueprint)
-    server = RobotWebServer(app, app_manager, user_manager, pr2_claimer)
+    robot_blueprint = Blueprint('robot', __name__)
+    robot = Robot(robot_blueprint, user_manager)
+    server = RobotWebServer(app, app_manager, user_manager, robot)
     return server
 
 
@@ -39,9 +39,9 @@ def development():
     client = MongoClient()
     db = client.rws_dev
     user_manager = UserManager(db)
-    start_stop_blueprint = Blueprint('robot_start_stop', __name__)
-    pr2_claimer = Pr2Claimer(start_stop_blueprint)
-    server = RobotWebServer(app, app_manager, user_manager, pr2_claimer)
+    robot_blueprint = Blueprint('robot', __name__)
+    robot = Robot(robot_blueprint, user_manager)
+    server = RobotWebServer(app, app_manager, user_manager, robot)
     return server
 
 
@@ -53,9 +53,9 @@ def test():
     client = MongoClient()
     db = client.rws_dev
     user_manager = UserManager(db)
-    start_stop_blueprint = Blueprint('robot_start_stop', __name__)
-    pr2_claimer = Pr2Claimer(start_stop_blueprint)
-    server = RobotWebServer(app, app_manager, user_manager, pr2_claimer)
+    robot_blueprint = Blueprint('robot', __name__)
+    robot = Robot(robot_blueprint, user_manager)
+    server = RobotWebServer(app, app_manager, user_manager, robot)
     server._app.config['TESTING'] = True
     server._app = server._app.test_client()
     return server

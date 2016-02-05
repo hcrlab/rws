@@ -2,9 +2,51 @@ from flask import Blueprint, request, jsonify
 from subprocess import CalledProcessError
 import config
 import os
+import rosnode
+import secrets
 import subprocess
 import users
 import yaml
+
+
+class Robot(object):
+    def __init__(self, blueprint, user_manager):
+        self._blueprint = blueprint
+        self._user_manager = user_manager
+        self._blueprint.add_url_rule('/bringup', 'robot_bringup', self.bring_up,
+                                     methods=['POST'])
+        self._bring_up_launch = None
+
+    def blueprint(self):
+        return self._blueprint
+
+    def is_brought_up(self):
+        try:
+            return True if '/robot_state_publisher' in rosnode.get_node_names(
+            ) else False
+        except:
+            return False
+
+    @users.login_required
+    def bring_up(self):
+        """Returns true if the robot was brought up, false if it was already up.
+        """
+        if not os.path.exists(secrets.BRINGUP_FILE):
+            raise ValueError('Robot bringup file {} does not exist.'.format(
+                secrets.BRINGUP_FILE))
+        if self.is_brought_up():
+            return jsonify({'isBroughtUp': False})
+        self._bring_up_launch = subprocess.Popen(['roslaunch',
+                                                  secrets.BRINGUP_FILE],
+                                                 env=os.environ)
+        return jsonify({'isBroughtUp': True})
+
+    def bring_down(self):
+        if self._bring_up_launch is None:
+            return
+        self._bring_up_launch.terminate()
+        self._bring_up_launch.wait()
+        self._bring_up_launch = None
 
 
 class Pr2Claimer(object):
@@ -77,7 +119,7 @@ class Pr2Claimer(object):
                     'message': 'Failed to check robot claim.'
                 })
 
-    # if the file doesn't exist, then the robot is not claimed
+        # if the file doesn't exist, then the robot is not claimed
         else:
             return jsonify({
                 'status': 'success',

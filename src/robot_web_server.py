@@ -14,14 +14,14 @@ import users
 
 
 class RobotWebServer(object):
-    def __init__(self, app, app_manager, user_manager, pr2_claimer):
+    def __init__(self, app, app_manager, user_manager, robot):
         """Initialize the web server with the given dependencies.
         Args:
           app: The Flask app instance.
           app_manager: The RWS app manager.
           user_manager: An instance of a UserManager.
           user_verifier: An instance of a UserVerifier.
-          pr2_claimer: An instance of Pr2Claimer.
+          robot: An instance of Robot.
         """
         self._app = app
         self._user_manager = user_manager
@@ -38,8 +38,8 @@ class RobotWebServer(object):
             self._app.register_blueprint(blueprint)
 
         # Include routes from blueprints
-        self._pr2_claimer = pr2_claimer
-        self._app.register_blueprint(pr2_claimer.blueprint(),
+        self._robot = robot
+        self._app.register_blueprint(robot.blueprint(),
                                      url_prefix='/api/robot')
         self._app.register_blueprint(user_presence_blueprint,
                                      url_prefix='/api/user_presence')
@@ -53,12 +53,7 @@ class RobotWebServer(object):
         self._app.add_url_rule('/api/apps/list', 'list_apps', self.list_apps)
         self._app.add_url_rule('/api/app/<package_name>/start', 'start_app', self.start_app, methods=['POST'])
         self._app.add_url_rule('/api/app/<package_name>/close', 'close_app', self.close_app, methods=['POST'])
-        self._app.add_url_rule('/get_websocket_url', 'websocket_url',
-                               self.websocket_url)
-        self._app.add_url_rule('/api/robot/is_started', 'is_started',
-                               self.is_started)
         self._app.add_url_rule('/api/web/google_client_id', 'google_client_id', self.google_client_id)
-        self._app.add_url_rule('/', 'index', self.index, defaults={'path': 'home'})
 
     def check_user(self):
         user_count_before = self._user_manager.user_count()
@@ -189,11 +184,7 @@ class RobotWebServer(object):
             return response
 
     @users.login_required
-    def websocket_url(self):
-        return ''
-
-    @users.login_required
-    def is_started(self):
+    def is_brought_up(self):
         try:
             return '1' if '/robot_state_publisher' in rosnode.get_node_names() else '0'
         except:
