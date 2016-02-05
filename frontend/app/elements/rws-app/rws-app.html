@@ -259,6 +259,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
       },
 
+      closeDrawer: function() {
+        this.$.paperDrawerPanel.closeDrawer();
+      },
+      scrollToTop: function(b) {
+        this.$.headerPanelMain.scrollToTop(b);
+      },
+
       _computeAuthOptions: function(gtoken) {
         return {'gtoken': gtoken};
       },

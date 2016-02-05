@@ -30,16 +30,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     }
 
+    function closeDrawer(ctx, next) {
+      app.closeDrawer();
+      next();
+    }
+
     // Routes
-    page('*', function(ctx, next) {
+    page('*', closeDrawer, function(ctx, next) {
       next();
     });
 
-    page('/', checkLogin, function() {
+    page('/', checkLogin, closeDrawer, function() {
       app.appRoute = 'home';
     });
 
-    page(app.baseUrl, checkLogin, function() {
+    page(app.baseUrl, checkLogin, closeDrawer, function() {
       app.appRoute = 'home';
     });
 
@@ -47,11 +52,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       //app.route = 'signin';
     });
 
-    page('/settings', checkLogin, function() {
+    page('/settings', checkLogin, closeDrawer, function() {
       app.appRoute = 'settings';
     });
 
-    page('/app/:package_name', checkLogin, function(data) {
+    page('/app/:package_name', checkLogin, closeDrawer, function(data) {
       app.appRoute = 'app';
       app.packageName = data.params.package_name;
     });
