@@ -6,6 +6,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from user_presence import blueprint as user_presence_blueprint
+import atexit
 import config
 import os
 import rosnode
@@ -66,6 +67,7 @@ class RobotWebServer(object):
                                methods=['POST'])
         self._app.add_url_rule('/api/web/google_client_id', 'google_client_id',
                                self.google_client_id)
+        atexit.register(self._app_manager.close_all, self._app_list)
 
     def check_user(self):
         user_count_before = self._user_manager.user_count()
