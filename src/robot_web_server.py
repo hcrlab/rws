@@ -45,15 +45,27 @@ class RobotWebServer(object):
                                      url_prefix='/api/user_presence')
 
         # Set up routes
-        self._app.add_url_rule('/api/users/check_registered', 'check_user', self.check_user)
-        self._app.add_url_rule('/api/users/list', 'list_users', self.list_users)
-        self._app.add_url_rule('/api/users/update', 'update_user', self.update_user, methods=['POST'])
-        self._app.add_url_rule('/api/users/add', 'add_user', self.add_user, methods=['POST'])
-        self._app.add_url_rule('/api/users/remove', 'remove_user', self.remove_user, methods=['POST'])
+        self._app.add_url_rule('/api/users/check_registered', 'check_user',
+                               self.check_user)
+        self._app.add_url_rule('/api/users/list', 'list_users',
+                               self.list_users)
+        self._app.add_url_rule('/api/users/update', 'update_user',
+                               self.update_user,
+                               methods=['POST'])
+        self._app.add_url_rule('/api/users/add', 'add_user', self.add_user,
+                               methods=['POST'])
+        self._app.add_url_rule('/api/users/remove', 'remove_user',
+                               self.remove_user,
+                               methods=['POST'])
         self._app.add_url_rule('/api/apps/list', 'list_apps', self.list_apps)
-        self._app.add_url_rule('/api/app/<package_name>/start', 'start_app', self.start_app, methods=['POST'])
-        self._app.add_url_rule('/api/app/<package_name>/close', 'close_app', self.close_app, methods=['POST'])
-        self._app.add_url_rule('/api/web/google_client_id', 'google_client_id', self.google_client_id)
+        self._app.add_url_rule('/api/app/<package_name>/start', 'start_app',
+                               self.start_app,
+                               methods=['POST'])
+        self._app.add_url_rule('/api/app/<package_name>/close', 'close_app',
+                               self.close_app,
+                               methods=['POST'])
+        self._app.add_url_rule('/api/web/google_client_id', 'google_client_id',
+                               self.google_client_id)
 
     def check_user(self):
         user_count_before = self._user_manager.user_count()
@@ -122,7 +134,8 @@ class RobotWebServer(object):
         #    response = jsonify({'error': 'Cannot remove last administrator.'})
         #    response.status_code = 400
         #    return response
-        prev = self._user_manager.update_user_with_json(data['userId'], data['update'])
+        prev = self._user_manager.update_user_with_json(data['userId'],
+                                                        data['update'])
         if prev is None:
             response = jsonify({'error': 'Invalid user ID.'})
             response.status_code = 400
@@ -132,16 +145,7 @@ class RobotWebServer(object):
     @users.admin_required
     def list_users(self):
         users = self._user_manager.list_users()
-        return jsonify({"data": [user.to_dict() for user in users]})  
-
-    @users.login_required
-    def index(self, path='home'):
-        app_names = [{'id': app.package_name(),
-                      'name': app.name()} for app in self._app_list]
-        return render_template(
-            'app.html',
-            route=path,
-            google_client_id=secrets.GOOGLE_CLIENT_ID)
+        return jsonify({"data": [user.to_dict() for user in users]})
 
     def google_client_id(self):
         return secrets.GOOGLE_CLIENT_ID
@@ -150,12 +154,11 @@ class RobotWebServer(object):
     def list_apps(self):
         data = []
         for package_name, app in self._rws_apps.items():
-            data.append({
-                'package_name': package_name,
-                'app_name': app.name()
-            })
+            data.append({'package_name': package_name, 'app_name': app.name()})
+
         def sort_by_name_key(app):
             return app['app_name']
+
         data.sort(key=sort_by_name_key)
         return jsonify({'data': data})
 
@@ -166,7 +169,10 @@ class RobotWebServer(object):
             rws_app.launch()
             return jsonify({'status': 'success'})
         else:
-            response = jsonify({'status': 'error', 'error': 'No app named {}'.format(package_name)})
+            response = jsonify({
+                'status': 'error',
+                'error': 'No app named {}'.format(package_name)
+            })
             response.status_code = 401
             return response
 
@@ -179,13 +185,9 @@ class RobotWebServer(object):
 
             return jsonify({'status': 'success'})
         else:
-            response = jsonify({'status': 'error', 'error': 'No app named {}'.format(package_name)})
+            response = jsonify({
+                'status': 'error',
+                'error': 'No app named {}'.format(package_name)
+            })
             response.status_code = 401
             return response
-
-    @users.login_required
-    def is_brought_up(self):
-        try:
-            return '1' if '/robot_state_publisher' in rosnode.get_node_names() else '0'
-        except:
-            return '0'

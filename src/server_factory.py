@@ -16,10 +16,9 @@ def production():
     """Production server that uses port 9090 for the websocket server.
     """
     app = Flask(__name__, static_folder='dist', static_url_path='')
-    cors = CORS(app, resources={r'/api/*': {'origins': secrets.PROD_FRONTEND_ORIGIN}})
     app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
     client = MongoClient()
-    db = client.rws_dev
+    db = client.rws
     user_manager = UserManager(db)
     robot_blueprint = Blueprint('robot', __name__)
     robot = Robot(robot_blueprint, user_manager)
@@ -51,7 +50,7 @@ def test():
     app = Flask(__name__, static_folder='dist', static_url_path='')
     app_manager = apps.AppManager(catkin_ws=None)
     client = MongoClient()
-    db = client.rws_dev
+    db = client.rws_test
     user_manager = UserManager(db)
     robot_blueprint = Blueprint('robot', __name__)
     robot = Robot(robot_blueprint, user_manager)
