@@ -89,6 +89,7 @@ class App(object):
                                                 env=os.environ)
 
     def terminate(self):
-        self._subprocess.terminate()
-        self._subprocess.wait()
+        if self._subprocess is not None:
+            self._subprocess.terminate()
+            self._subprocess.wait()
         self._subprocess = None
