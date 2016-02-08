@@ -22,25 +22,28 @@ def production():
     user_manager = UserManager(db)
     robot_blueprint = Blueprint('robot', __name__)
     robot = Robot(robot_blueprint, user_manager)
-    server = RobotWebServer(app, app_manager, user_manager, robot)
+    websocket_server = WebsocketServer(9090)
+    server = RobotWebServer(app, app_manager, user_manager, robot,
+                            websocket_server)
     return server
 
 
 def development():
-    """Development server that uses port 9999 for the websocket server.
-
-    We use a different port number because we could be developing on the robot
-    itself.
+    """Development server.
     """
     app = Flask(__name__, static_folder='dist', static_url_path='')
-    cors = CORS(app, resources={r'/api/*': {'origins': secrets.DEV_FRONTEND_ORIGIN}})
+    cors = CORS(
+        app,
+        resources={r'/api/*': {'origins': secrets.DEV_FRONTEND_ORIGIN}})
     app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
     client = MongoClient()
     db = client.rws_dev
     user_manager = UserManager(db)
     robot_blueprint = Blueprint('robot', __name__)
     robot = Robot(robot_blueprint, user_manager)
-    server = RobotWebServer(app, app_manager, user_manager, robot)
+    websocket_server = WebsocketServer(9090)
+    server = RobotWebServer(app, app_manager, user_manager, robot,
+                            websocket_server)
     return server
 
 
@@ -54,7 +57,9 @@ def test():
     user_manager = UserManager(db)
     robot_blueprint = Blueprint('robot', __name__)
     robot = Robot(robot_blueprint, user_manager)
-    server = RobotWebServer(app, app_manager, user_manager, robot)
+    websocket_server = WebsocketServer(9090)
+    server = RobotWebServer(app, app_manager, user_manager, robot,
+                            websocket_server)
     server._app.config['TESTING'] = True
     server._app = server._app.test_client()
     return server

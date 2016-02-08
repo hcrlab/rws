@@ -1,3 +1,4 @@
+import rosnode
 import os
 import subprocess
 
@@ -24,16 +25,23 @@ class WebsocketServer(object):
         return self._port
 
     def is_running(self):
-        return self._subprocess is not None
+        if self._subprocess is not None:
+            return True
+        try:
+            return True if '/rosbridge_websocket' in rosnode.get_node_names(
+            ) else False
+        except:
+            return False
 
     def launch(self):
-        if self._subprocess is None:
+        if not self.is_running():
             self._subprocess = subprocess.Popen(
                 ['roslaunch', 'rosbridge_server', 'rosbridge_websocket.launch',
                  'port:={}'.format(self._port)],
                 env=os.environ)
 
     def terminate(self):
-        self._subprocess.terminate()
-        self._subprocess.wait()
+        if self._subprocess is not None:
+            self._subprocess.terminate()
+            self._subprocess.wait()
         self._subprocess = None
