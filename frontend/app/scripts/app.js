@@ -14,12 +14,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
-  app.backend = window.location.protocol + '//' + window.location.hostname + ':5001';
+  app.backend = window.location.protocol + '//' + window.location.hostname + ':5001'; // Development configuration
   app.googleClientId = '1078092352894-a2te9m2ejqurfaap9frrvtg6krjds8pv.apps.googleusercontent.com';
 
   // Sets app default base URL
   app.baseUrl = '/';
   if (window.location.port === '') {  // if production
+    app.backend = ''; // Backend is same server as frontend.
     // Uncomment app.baseURL below and
     // set app.baseURL to '/your-pathname/' if running from folder in production
     // app.baseUrl = '/polymer-starter-kit/';
