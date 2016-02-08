@@ -205,7 +205,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{appRoute}}">
             <section data-route="home">
-              Home 
+              <p style="margin-left: 10px">
+                Welcome to the robot!
+              </p>
+              <p style="margin-left: 10px">
+                You can select an app from the main menu on the left.
+                Check the dashboard for more information on the robot's status.
+              </p>
             </section>
             <section data-route="settings">
               <rws-settings backend="{{backend}}" gtoken="{{gtoken}}"></rws-settings>
