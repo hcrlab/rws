@@ -58,20 +58,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <iron-ajax
       id="userListAjax"
-      url="http://localhost:5001/api/users/list"
+      url="{{backend}}/api/users/list"
       params=''
       handle-as="json"
       on-response="onUserList"
     ></iron-ajax>
     <iron-ajax
       id="updateUserAjax"
-      url="http://localhost:5001/api/users/update"
+      url="{{backend}}/api/users/update"
       content-type='application/json'
       method='POST'
     ></iron-ajax>
     <iron-ajax
       id="addUserAjax"
-      url="http://localhost:5001/api/users/add"
+      url="{{backend}}/api/users/add"
       content-type='application/json'
       method='POST'
       on-response='onAddUserResponse'
@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     ></iron-ajax>
     <iron-ajax
       id="removeUserAjax"
-      url="http://localhost:5001/api/users/remove"
+      url="{{backend}}/api/users/remove"
       content-type='application/json'
       method='POST'
       on-response='onRemoveUserResponse'
@@ -123,6 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'rws-settings',
 
       properties: {
+        backend: String,
         users: {
           type: Array,
           value: [],

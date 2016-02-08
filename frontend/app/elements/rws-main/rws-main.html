@@ -26,7 +26,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <iron-ajax
       id="checkUserAjax"
-      url="http://localhost:5001/api/users/check_registered"
+      url="{{backend}}/api/users/check_registered"
       params=''
       handle-as="json"
       on-response="onCheckUserResponse"
@@ -37,6 +37,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
     <template is="dom-if" if="{{!isSignedIn}}">
       <rws-signin id="rwsSignin"
+        backend="{{backend}}"
         google-client-id="{{googleClientId}}" on-rws-signin-success="_onRwsSigninSuccess"></rws-signin>
     </template>
     </iron-pages>

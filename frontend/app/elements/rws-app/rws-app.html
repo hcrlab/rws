@@ -142,7 +142,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-ajax
       auto
       id="listAppsAjax"
-      url="http://localhost:5001/api/apps/list"
+      url="{{backend}}/api/apps/list"
       params="{{authOptions}}"
       handle-as="json"
       last-response="{{appList}}"
@@ -208,7 +208,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               Home 
             </section>
             <section data-route="settings">
-              <rws-settings gtoken="{{gtoken}}"></rws-settings>
+              <rws-settings backend="{{backend}}" gtoken="{{gtoken}}"></rws-settings>
             </section>
             <section data-route="app">
               <iron-ajax id="startApp"
