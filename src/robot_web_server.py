@@ -53,6 +53,7 @@ class RobotWebServer(object):
 
         # Set up routes
         self._app.add_url_rule('/', 'index', self.index)
+        self._app.add_url_rule('/signin', 'signin', self.index)
         self._app.add_url_rule('/api/users/check_registered', 'check_user',
                                self.check_user)
         self._app.add_url_rule('/api/users/list', 'list_users',
