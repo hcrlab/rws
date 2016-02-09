@@ -40,7 +40,7 @@ class RobotWebServer(object):
         for rws_app in self._app_list:
             blueprint = Blueprint(
                 rws_app.package_name(), __name__,
-                static_url_path='/app/{}'.format(rws_app.package_name()),
+                static_url_path='/a/{}'.format(rws_app.package_name()),
                 static_folder=os.path.join(rws_app.package_path(), 'www'))
             self._app.register_blueprint(blueprint)
 
@@ -52,8 +52,9 @@ class RobotWebServer(object):
                                      url_prefix='/api/user_presence')
 
         # Set up routes
-        self._app.add_url_rule('/', 'index', self.index)
-        self._app.add_url_rule('/signin', 'signin', self.index)
+        self._app.add_url_rule('/', 'index', self.index, defaults={'path': ''})
+        self._app.add_url_rule('/signin', 'signin', self.index, defaults={'path': 'signin'})
+        self._app.add_url_rule('/app/<path>', 'app', self.index)
         self._app.add_url_rule('/api/users/check_registered', 'check_user',
                                self.check_user)
         self._app.add_url_rule('/api/users/list', 'list_users',
@@ -77,7 +78,7 @@ class RobotWebServer(object):
                                self.google_client_id)
         atexit.register(self._app_manager.close_all, self._app_list)
 
-    def index(self):
+    def index(self, path):
         return self._app.send_static_file('index.html')
 
     def check_user(self):
