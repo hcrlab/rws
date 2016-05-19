@@ -144,6 +144,7 @@
       auto
       id="listAppsAjax"
       url="{{backend}}/api/apps/list"
+      on-response="_onAppList"
       params="{{authOptions}}"
       handle-as="json"
       last-response="{{appList}}"
@@ -241,10 +242,22 @@
           type: String,
           value: 'Robot web server',
         },
+
+        /**
+         * A map from package names to app names.
+         */
+        appNames: {
+          type: Object,
+          value: {
+            home: 'Robot web server',
+            settings: 'Settings',
+          },
+        },
         appRoute: {
           type: String,
           value: 'home',
           notify: true,
+          observer: '_onAppRouteChanged',
         },
         backend: {
           type: String,
@@ -304,16 +317,44 @@
       },
 
       _computeSelectedMenuItem: function() {
-        if (this.appRoute == 'home' || this.appRoute == 'settings') {
+        if (this.appRoute === 'home' || this.appRoute === 'settings') {
           return this.appRoute;
         } else {
           return 'app/' + this.packageName;
         }
       },
 
+      _onAppList: function(evt, detail) {
+        this.appNames = {
+          home: 'Robot web server',
+          settings: 'Settings',
+        };
+        for (var app of this.$.listAppsAjax.lastResponse.data) {
+          this.appNames[app['package_name']] = app['app_name'];
+        }
+        this._updateAppName();
+      },
+
+      _onAppRouteChanged: function() {
+        this._updateAppName();
+      },
+
       _onPackageNameChanged: function() {
         this.$.startApp.generateRequest();
-      }
+        this._updateAppName();
+      },
+
+      _updateAppName: function() {
+        var name = this.appRoute;
+        if (this.appRoute === 'app') {
+          name = this.packageName;
+        }
+        if (this.appNames && name && this.appNames[name]) {
+          this.appName = this.appNames[name];
+        } else {
+          this.appName = 'Robot web server';
+        }
+      },
     });
   })();
   </script>
