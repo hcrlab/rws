@@ -14,8 +14,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // and give it some initial binding values
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
-  app.backend = window.location.protocol + '//' + window.location.hostname + ':5001'; // Development configuration
-  app.googleClientId = '1078092352894-a2te9m2ejqurfaap9frrvtg6krjds8pv.apps.googleusercontent.com';
 
   // Sets app default base URL
   app.baseUrl = '/';
@@ -41,6 +39,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
     // imports are loaded and elements have been registered
+    app.backend = window.location.protocol + '//' + window.location.hostname + ':5001'; // Development configuration
+    app.googleClientId = '1078092352894-a2te9m2ejqurfaap9frrvtg6krjds8pv.apps.googleusercontent.com';
   });
 
   // Scroll page to top and expand header
