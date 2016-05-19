@@ -326,7 +326,9 @@
           home: 'Robot web server',
           settings: 'Settings',
         };
-        for (var app of this.$.listAppsAjax.lastResponse.data) {
+        var appList = this.$.listAppsAjax.lastResponse.data;
+        for (var i in appList) {
+          var app = appList[i];
           this.appNames[app['package_name']] = app['app_name'];
         }
         this._updateAppName();
