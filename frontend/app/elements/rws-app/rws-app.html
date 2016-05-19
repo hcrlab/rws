@@ -183,7 +183,7 @@
 
       <paper-drawer-panel id="paperDrawerPanel" responsive-width="1024px" drawer-width="285px">
         <paper-header-panel drawer mode="seamed" id="rwsDrawerPanel">
-          <paper-menu class="list" attr-for-selected="data-route" selected="{{appRoute}}">
+          <paper-menu attr-for-selected="data-route" selected="_computeSelectedMenuItem()">
             <a data-route="home" href="{{baseUrl}}" class="navListItem">
               <iron-icon icon="home"></iron-icon>
               <span>Home</span>
@@ -192,14 +192,12 @@
               <iron-icon icon="settings"></iron-icon>
               <span>Settings</span>
             </a>
-            <div id="appList">
-              <template is="dom-repeat" items="[[appList.data]]">
-                <a data-route="app/[[item.package_name]]" href="{{baseUrl}}app/[[item.package_name]]" class="navListItem">
-                  <iron-icon icon="work"></iron-icon>
-                  <span>[[item.app_name]]</span>
-                </a>
-              </template>
-            </div>
+            <template is="dom-repeat" items="[[appList.data]]">
+              <a data-route$="app/[[item.package_name]]" href$="{{baseUrl}}app/[[item.package_name]]" class="navListItem">
+                <iron-icon icon="work"></iron-icon>
+                <span>[[item.app_name]]</span>
+              </a>
+            </template>
           </paper-menu>
         </paper-header-panel>
 
@@ -303,6 +301,14 @@
 
       _computeAuthOptions: function(gtoken) {
         return {'gtoken': gtoken};
+      },
+
+      _computeSelectedMenuItem: function() {
+        if (this.appRoute == 'home' || this.appRoute == 'settings') {
+          return this.appRoute;
+        } else {
+          return 'app/' + this.packageName;
+        }
       },
 
       _onPackageNameChanged: function() {
