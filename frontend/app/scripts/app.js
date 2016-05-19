@@ -39,7 +39,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
     // imports are loaded and elements have been registered
-    app.backend = window.location.protocol + '//' + window.location.hostname + ':5001'; // Development configuration
+    if (window.location.port !== '') {
+      app.backend = window.location.protocol + '//' + window.location.hostname + ':5001'; // Development configuration
+    }
     app.googleClientId = '1078092352894-a2te9m2ejqurfaap9frrvtg6krjds8pv.apps.googleusercontent.com';
   });
 
