@@ -53,6 +53,7 @@ class RobotWebServer(object):
 
         # Set up routes
         self._app.add_url_rule('/', 'index', self.index, defaults={'path': ''})
+        self._app.add_url_rule('/settings', 'settings', self.index, defaults={'path': 'settings'})
         self._app.add_url_rule('/signin', 'signin', self.index, defaults={'path': 'signin'})
         self._app.add_url_rule('/app/<path>', 'app', self.index)
         self._app.add_url_rule('/api/users/check_registered', 'check_user',
