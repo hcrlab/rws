@@ -91,5 +91,4 @@ class App(object):
     def terminate(self):
         if self._subprocess is not None:
             self._subprocess.terminate()
-            self._subprocess.wait()
         self._subprocess = None

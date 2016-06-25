@@ -53,8 +53,10 @@ class RobotWebServer(object):
 
         # Set up routes
         self._app.add_url_rule('/', 'index', self.index, defaults={'path': ''})
-        self._app.add_url_rule('/settings', 'settings', self.index, defaults={'path': 'settings'})
-        self._app.add_url_rule('/signin', 'signin', self.index, defaults={'path': 'signin'})
+        self._app.add_url_rule('/settings', 'settings', self.index,
+                               defaults={'path': 'settings'})
+        self._app.add_url_rule('/signin', 'signin', self.index,
+                               defaults={'path': 'signin'})
         self._app.add_url_rule('/app/<path>', 'app', self.index)
         self._app.add_url_rule('/api/users/check_registered', 'check_user',
                                self.check_user)
@@ -169,7 +171,11 @@ class RobotWebServer(object):
     def list_apps(self):
         data = []
         for package_name, app in self._rws_apps.items():
-            data.append({'package_name': package_name, 'app_name': app.name()})
+            data.append({
+                'package_name': package_name,
+                'app_name': app.name(),
+                'is_running': app.is_running()
+            })
 
         def sort_by_name_key(app):
             return app['app_name']
