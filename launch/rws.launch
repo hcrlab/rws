@@ -30,4 +30,11 @@
 
   <!-- MoveIt! -->
   <include file="$(find pr2_moveit_config)/launch/move_group.launch" />
+
+  <!--
+    CodeIt programs database.
+    We're cheating by placing this in this file because CodeIt is the only user of this.
+    It allows CodeIt programs to instantly load.
+  -->
+  <node pkg="code_it" type="programs.py" name="program_db" />
 </launch>
