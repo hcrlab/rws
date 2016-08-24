@@ -15,6 +15,7 @@
 
   <!-- Mongo ROS message DB -->  
   <node name="mongo_msg_db" pkg="mongo_msg_db" type="db_node.py" />
+  <node name="static_cloud_db" pkg="static_cloud_db" type="static_cloud_db.py" />
 
   <!-- Web video server -->
   <node name="ros_web_video" pkg="ros_web_video" type="ros_web_video">
@@ -29,7 +30,8 @@
   <!-- Interactive marker proxy will need to go here eventually -->
 
   <!-- MoveIt! -->
-  <include file="$(find pr2_moveit_config)/launch/move_group.launch" />
+  <!-- NOTE (jstn): Running MoveIt on workstation instead of on robot. -->
+  <!--include file="$(find pr2_moveit_config)/launch/move_group.launch" /-->
 
   <!-- Cheats and special cases -->
   <!--
