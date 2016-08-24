@@ -30,8 +30,8 @@ class RobotWebServer(object):
         self._user_manager = user_manager
 
         # Start websocket server if needed.
-        self._websocket_server = websocket_server
-        self._websocket_server.launch()
+        # self._websocket_server = websocket_server
+        # self._websocket_server.launch()
 
         # Include routes for each app.
         self._app_manager = app_manager
