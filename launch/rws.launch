@@ -6,6 +6,7 @@
 <launch>
   <!-- PR2 bringup. -->
   <include file="/etc/ros/robot.launch" />
+  <include file="$(find pr2_machine)/pr2.machine" />
 
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
 
@@ -32,8 +33,13 @@
   <!-- Interactive marker proxy will need to go here eventually -->
 
   <!-- MoveIt! -->
-  <!-- NOTE (jstn): Running MoveIt on workstation instead of on robot. -->
-  <!--include file="$(find pr2_moveit_config)/launch/move_group.launch" /-->
+  <include file="$(find pr2_moveit_config)/launch/move_group.launch" machine="c2">
+    <arg name="moveit_octomap_sensor_params_file" value="/var/ros/rws/config/sensors_dummy.yaml"/>
+  </include>
+
+  <!-- Custom landmarks -->
+  <!-- NOTE (jstn): this currently provides the only frontend that can be used to name objects, so run this on your desktop. -->
+  <!--include file="$(find rapid_perception)/launch/object_search.launch" machine="c2" /-->
 
   <!-- Cheats and special cases -->
   <!--
