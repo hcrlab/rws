@@ -53,7 +53,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <h2 class="page-title">Robot web server</h2>
         <div class="signin-buttons">
           <google-signin id="signin"
-            client-id="" scopes="profile email"
+            client-id="1078092352894-a2te9m2ejqurfaap9frrvtg6krjds8pv.apps.googleusercontent.com" scopes="profile email"
             theme="light" width="wide" raised
             on-google-signin-success="_onGoogleSigninSuccess"
           ></google-signin>
@@ -71,22 +71,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       properties: {
         'backend': String,
-        'googleClientId': {
-          type: String,
-          observer: '_googleClientIdChanged',
-        },
         'redirect': String,
       },
 
       signOut: function() {
         this.$.signin.signOut();
-      },
-
-      // Necessary because google-signin's clientId is read only.
-      _googleClientIdChanged: function(val) {
-        if (val !== "{{googleClientId}}") {
-          this.$.signin.clientId = val;
-        }
       },
 
       _onGoogleSigninSuccess: function() {
@@ -111,7 +100,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _onCheckUserError: function(e) {
         this.$.signin.signOut();
-        alert(e.detail.response.error);
+        console.log(e);
       },
     });
   })();
