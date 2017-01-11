@@ -43,14 +43,6 @@
 
   <!-- Cheats and special cases -->
   <!--
-    PbD visualization backend.
-    MoveIt spews out errors whenever a previously published TF frame disappears.
-    This causes to slow down and become unstable when a lot of frames disappear.
-    So, we can't allow users to shut down this program, which publishes lots of frames.
-  -->
-  <node pkg="rws_pr2_pbd" type="state_server_node" name="rws_pr2_pbd_state_server" />
-
-  <!--
     CodeIt programs database.
     We're cheating by placing this in this file because CodeIt is the only user of this.
     It allows CodeIt programs to instantly load.
