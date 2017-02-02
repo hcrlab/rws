@@ -21,11 +21,7 @@ class Robot(object):
         return self._blueprint
 
     def is_brought_up(self):
-        try:
-            return True if '/robot_state_publisher' in rosnode.get_node_names(
-            ) else False
-        except:
-            return False
+        return self._bring_up_launch is not None
 
     @users.login_required
     def bring_up(self):
