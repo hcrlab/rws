@@ -17,8 +17,9 @@ class AppManager(object):
 
     def get_apps(self):
         """Traverses package directories for valid RWS apps.
-    Returns a list of valid apps.
-    """
+
+        Returns a list of valid apps.
+        """
         if self._catkin_ws is not None:
             # Assumes that apps are all packages and not metapackages.
             package_dir = os.path.join(self._catkin_ws, 'src')
