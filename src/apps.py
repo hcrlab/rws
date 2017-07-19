@@ -1,4 +1,5 @@
 import os
+import rospkg
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -21,11 +22,7 @@ class AppManager(object):
         Returns a list of valid apps.
         """
         if self._catkin_ws is not None:
-            # Assumes that apps are all packages and not metapackages.
-            package_dir = os.path.join(self._catkin_ws, 'src')
-            package_names = os.listdir(package_dir)
-            full_paths = [os.path.join(package_dir, name)
-                          for name in package_names]
+            full_paths = [p for p in rospkg.get_ros_paths() if p.startswith(self._catkin_ws)]
             app_list = []
             for path in full_paths:
                 try:
