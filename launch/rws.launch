@@ -33,7 +33,7 @@
   <!-- Interactive marker proxy will need to go here eventually -->
 
   <!-- MoveIt! -->
-  <include file="$(find pr2_moveit_config)/launch/move_group.launch" machine="c2">
+  <include file="$(find pr2_moveit_config)/launch/move_group.launch">
     <arg name="moveit_octomap_sensor_params_file" value="/var/ros/rws/config/sensors_dummy.yaml"/>
   </include>
 
