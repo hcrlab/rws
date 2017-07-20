@@ -80,6 +80,7 @@ class RobotWebServer(object):
         self._app.add_url_rule('/api/web/google_client_id', 'google_client_id',
                                self.google_client_id)
         atexit.register(self._app_manager.close_all, self._app_list)
+        atexit.register(self._robot.bring_down)
 
     def index(self, path):
         return self._app.send_static_file('index.html')
