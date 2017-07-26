@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/ros-websocket/ros-websocket.html">
 
 <dom-module id="rws-app">
   <template>
@@ -166,6 +167,22 @@
       method="POST"
       last-response="{{isBroughtUp}}"
     ></iron-ajax>
+    <ros-websocket auto id="ros"
+      on-connection="_handleConnection"
+      on-close="_handleClose"
+      on-error="_handleError"
+    ></ros-websocket>
+    <paper-dialog id="disconnected" modal="true">
+      <h2>Disconnected from the websocket server</h2>
+      <p>
+        The robot is not connected to the internet right now.
+        Check on it and press "Retry"
+      </p>
+      <div class="buttons">
+        <paper-button dialog-confirm on-tap="_reconnect">Retry</paper-button>
+      </div>
+    </paper-dialog>
+
     <paper-dialog id="bringUp" modal="true" opened="{{isBroughtUp.isBroughtUp}}">
       <h2>The robot is starting up</h2>
       <p>
@@ -391,12 +408,28 @@
         }
       },
 
-      _updateSelectedMenu(appRoute) {
+      _updateSelectedMenu: function(appRoute) {
         if (appRoute === 'home' || appRoute === 'settings') {
           this.selectedMenuItem = appRoute;
         } else {
           return 'app/' + this.packageName;
         }
+      },
+
+      _handleConnection: function() {
+        this.$.disconnected.close();
+        console.log('Connected to the websocket server.');
+      },
+      _handleClose: function() {
+        console.log('Closed connection to the websocket server.');
+        this.$.disconnected.open();
+      },
+      _handleError: function() {
+        console.log('Error connecting to the websocket server.');
+        this.$.disconnected.open();
+      },
+      _reconnect: function() {
+        this.$.ros.connect();
       },
     });
   })();
