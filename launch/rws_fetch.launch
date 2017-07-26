@@ -1,0 +1,35 @@
+<!--
+  Robot bringup file for the University of Washington Fetch.
+  The Fetch automatically runs most stuff, so this file is fairly minimal.
+  See https://github.com/hcrlab/rws/wiki/What-to-put-in-app.launch
+ -->
+<launch>
+  <!-- Fetch bringup. -->
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+
+  <!-- Mongo ROS message DB -->  
+  <node name="mongo_msg_db" pkg="mongo_msg_db" type="db_node.py" />
+
+  <!-- Navigation -->
+  <include file="$(find fetch_navigation)/launch/fetch_nav.launch">
+    <arg name="map_file" value="/var/ros/maps/cse014.yaml" />
+  </include>
+
+  <!-- Web video server -->
+  <!--node name="ros_web_video" pkg="ros_web_video" type="ros_web_video">
+    <param name="port" value="9999" />
+    <param name="framerate" value="15" />
+    <param name="bitrate" value="250000" />
+  </node-->
+
+  <!-- TF web republisher -->
+  <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" />
+
+  <!-- Cheats and special cases -->
+  <!--
+    CodeIt programs database.
+    We're cheating by placing this in this file because CodeIt is the only user of this.
+    It allows CodeIt programs to instantly load.
+  -->
+  <node pkg="code_it" type="programs.py" name="program_db" />
+</launch>
