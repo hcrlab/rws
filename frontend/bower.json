@@ -18,6 +18,7 @@
   },
   "ignore": [],
   "resolutions": {
-    "paper-menu": "4fecb43601"
+    "paper-menu": "4fecb43601",
+    "firebase": "^3.0"
   }
 }

@@ -54,5 +54,6 @@ docs/_build/
 target/
 
 secrets.py
+resources/gitkit/credentials.json
 resources/gitkit/gitkit-server-config.json
 resources/gitkit/*.p12

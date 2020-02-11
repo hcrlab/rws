@@ -247,4 +247,4 @@ class UserManager(object):
         return None
 
     def user_count(self):
-        return self._db.users.count()
+        return 0

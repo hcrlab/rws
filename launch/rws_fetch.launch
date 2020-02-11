@@ -11,9 +11,9 @@
   <node name="mongo_msg_db" pkg="mongo_msg_db" type="db_node.py" />
 
   <!-- Navigation -->
-  <include file="$(find fetch_navigation)/launch/fetch_nav.launch">
+  <!-- <include file="$(find fetch_navigation)/launch/fetch_nav.launch">
     <arg name="map_file" value="/var/ros/maps/cse014.yaml" />
-  </include>
+  </include> -->
 
   <!-- Web video server -->
   <!--node name="ros_web_video" pkg="ros_web_video" type="ros_web_video">
@@ -21,6 +21,7 @@
     <param name="framerate" value="15" />
     <param name="bitrate" value="250000" />
   </node-->
+  <node pkg="web_video_server" type="web_video_server" name="web_video_server_node" />
 
   <!-- TF web republisher -->
   <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" />
@@ -31,5 +32,5 @@
     We're cheating by placing this in this file because CodeIt is the only user of this.
     It allows CodeIt programs to instantly load.
   -->
-  <node pkg="code_it" type="programs.py" name="program_db" />
+  <!-- <node pkg="code_it" type="programs.py" name="program_db" /> -->
 </launch>
