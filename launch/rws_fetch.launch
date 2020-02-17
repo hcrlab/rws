@@ -21,9 +21,8 @@
     <param name="framerate" value="15" />
     <param name="bitrate" value="250000" />
   </node-->
-  <node pkg="web_video_server" type="web_video_server" name="web_video_server_node">
-    <param name="port" value="8000" />
-  </node>
+  <node pkg="web_video_server" type="web_video_server" name="web_video_server_node" />
+
   <!-- TF web republisher -->
   <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher" />
 
