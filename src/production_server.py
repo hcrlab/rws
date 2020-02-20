@@ -9,4 +9,3 @@ import server_factory
 
 server = server_factory.production()
 app = server._app
-app.run(host='0.0.0.0', port=5001)
