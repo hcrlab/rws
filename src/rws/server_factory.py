@@ -15,7 +15,7 @@ import secrets
 def production():
     """Production server that uses port 9090 for the websocket server.
     """
-    app = Flask(__name__, static_folder='dist', static_url_path='')
+    app = Flask(__name__, static_url_path='')
     app_manager = apps.AppManager(catkin_ws=secrets.CATKIN_WS)
     client = MongoClient()
     db = client.rws
@@ -31,7 +31,7 @@ def production():
 def development():
     """Development server.
     """
-    app = Flask(__name__, static_folder='dist', static_url_path='')
+    app = Flask(__name__, static_url_path='')
     cors = CORS(
         app,
         resources={r'/api/*': {'origins': secrets.DEV_FRONTEND_ORIGIN}})
@@ -50,7 +50,7 @@ def development():
 def test():
     """Test server. Most likely many of the objects will be mocked anyway.
     """
-    app = Flask(__name__, static_folder='dist', static_url_path='')
+    app = Flask(__name__, static_url_path='')
     app_manager = apps.AppManager(catkin_ws=None)
     client = MongoClient()
     db = client.rws_test

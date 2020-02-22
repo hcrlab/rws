@@ -1,6 +1,9 @@
+Enum34
 Flask
 flask-cors
-mock
-pymongo
 google-api-python-client
-Enum34
+mock
+oauth2client
+pymongo
+pyyaml
+rospkg

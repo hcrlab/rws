@@ -2,7 +2,7 @@
 
 import argparse
 import rospy
-import server_factory
+from rws import server_factory
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Robot web server.')
