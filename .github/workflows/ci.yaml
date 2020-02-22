@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   industrial_ci:
     env:
-#      AFTER_SCRIPT: 'cd $target_ws && rosenv && catkin build --this --no-deps --no-status --verbose --make-args roslint'
+      AFTER_SCRIPT: 'cd $target_ws && rosenv && catkin build --this --no-deps --no-status --verbose --make-args roslint'
       CATKIN_LINT: true
       ROS_DISTRO: melodic
       ROS_REPO: main
