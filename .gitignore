@@ -53,6 +53,8 @@ docs/_build/
 # PyBuilder
 target/
 
+node_modules/
+
 secrets.py
 resources/gitkit/credentials.json
 resources/gitkit/gitkit-server-config.json

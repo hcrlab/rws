@@ -1,43 +1,59 @@
 {
-  "private": true,
-  "devDependencies": {
-    "browser-sync": "^2.7.7",
-    "connect-history-api-fallback": "^1.1.0",
-    "del": "^2.0.2",
-    "glob-all": "^3.0.1",
-    "gulp": "^3.8.5",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-cache": "^0.4.0",
-    "gulp-changed": "^1.0.0",
-    "gulp-gh-pages": "^0.5.4",
-    "gulp-html-extract": "^0.0.3",
-    "gulp-if": "^2.0.0",
-    "gulp-imagemin": "^2.2.1",
-    "gulp-jscs": "^3.0.0",
-    "gulp-jscs-stylish": "^1.1.2",
-    "gulp-jshint": "^1.6.3",
-    "gulp-load-plugins": "^1.1.0",
-    "gulp-minify-css": "^1.2.1",
-    "gulp-minify-html": "^1.0.2",
-    "gulp-rename": "^1.2.0",
-    "gulp-replace": "^0.5.4",
-    "gulp-size": "^2.0.0",
-    "gulp-uglify": "^1.2.0",
-    "gulp-useref": "^2.1.0",
-    "gulp-vulcanize": "^6.0.0",
-    "jshint-stylish": "^2.0.0",
-    "merge-stream": "^1.0.0",
-    "require-dir": "^0.3.0",
-    "run-sequence": "^1.0.2",
-    "vulcanize": ">= 1.4.2",
-    "web-component-tester": "^3.4.0"
-  },
   "scripts": {
-    "test": "gulp test:local",
-    "start": "gulp serve",
-    "lint": "gulp lint"
+    "lint:eslint": "eslint --ext .js,.html .",
+    "format:eslint": "eslint --ext .js,.html . --fix",
+    "lint:prettier": "prettier \"**/*.js\" --list-different || (echo '↑↑ these files are not prettier formatted ↑↑' && exit 1)",
+    "format:prettier": "prettier \"**/*.js\" --write",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "test": "karma start",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test:es5": "karma start karma.es5.config.js",
+    "test:es5:watch": "karma start karma.es5.config.js --auto-watch=true --single-run=false",
+    "test:es5:bs": "karma start karma.es5.bs.config.js",
+    "build": "rimraf dist && rollup -c rollup.config.js",
+    "start:build": "http-server dist -o",
+    "watch:build": "rimraf dist && rollup --watch -c rollup.config.js & http-server dist -o",
+    "start": "owc-dev-server --open ./src"
   },
-  "engines": {
-    "node": ">=0.10.0"
+  "devDependencies": {
+    "@open-wc/eslint-config": "^0.3.0",
+    "@open-wc/prettier-config": "^0.1.0",
+    "@commitlint/cli": "^7.0.0",
+    "@commitlint/config-conventional": "^7.0.0",
+    "husky": "^1.0.0",
+    "lint-staged": "^8.0.0",
+    "@open-wc/testing-karma": "^0.4.0",
+    "webpack-merge": "^4.1.5",
+    "@open-wc/testing-karma-bs": "^0.2.0",
+    "@open-wc/testing": "^0.9.0",
+    "@open-wc/building-rollup": "^0.1.1",
+    "http-server": "^0.11.1",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.6.0",
+    "@open-wc/polyfills-loader": "^0.2.1",
+    "owc-dev-server": "^0.1.2",
+    "eslint-plugin-lit": "^0.5.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "name": "robot-web-server",
+  "license": "MIT",
+  "dependencies": {
+    "@material/mwc-button": "^0.13.0",
+    "@material/mwc-dialog": "^0.13.0",
+    "@material/mwc-drawer": "^0.13.0",
+    "@material/mwc-icon": "^0.13.0",
+    "@material/mwc-icon-button": "^0.13.0",
+    "@material/mwc-list": "^0.13.0",
+    "@material/mwc-top-app-bar": "^0.13.0",
+    "@webcomponents/webcomponentsjs": "^2.4.1",
+    "lit-element": "^2.0.1",
+    "lit-html": "^1.0.0"
   }
 }
