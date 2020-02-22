@@ -1,0 +1,34 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  industrial_ci:
+    env:
+#      AFTER_SCRIPT: 'cd $target_ws && rosenv && catkin build --this --no-deps --no-status --verbose --make-args roslint'
+      CATKIN_LINT: true
+      ROS_DISTRO: melodic
+      ROS_REPO: main
+    strategy:
+      matrix:
+        env:
+          - {}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: 'ros-industrial/industrial_ci@master'
+        env: ${{matrix.env}}
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 2.7
+    - name: Install dependencies
+      run: |
+        pip install flake8 pep8-naming
+    - name: Lint
+      run: |
+        flake8 -v
